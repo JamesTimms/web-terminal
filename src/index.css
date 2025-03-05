@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Base styles for better font rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reset body margin and set minimum width */
+body {
+  margin: 0;
+  min-width: 320px;
+}
