@@ -10,7 +10,7 @@ A personal website for James Timms. A modern, interactive terminal-based website
 
   - [x] Create new Vite project with React and TypeScript using pnpm
   - [x] Install dependencies (xterm, styled-components)
-  - [ ] Configure ESLint and Prettier
+  - [x] Configure ESLint and Prettier
 
 - Create basic Terminal UI
 

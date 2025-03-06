@@ -8,33 +8,21 @@ importers:
 
   .:
     dependencies:
-      '@tailwindcss/vite':
-        specifier: ^4.0.9
-        version: 4.0.9(vite@6.2.0(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.3))
       '@tanstack/react-router':
         specifier: ^1.112.13
         version: 1.112.13(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@types/xterm':
-        specifier: ^3.0.0
-        version: 3.0.0
       '@xterm/addon-fit':
         specifier: ^0.10.0
         version: 0.10.0(@xterm/xterm@5.5.0)
       '@xterm/xterm':
         specifier: ^5.5.0
         version: 5.5.0
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.20(postcss@8.5.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      postcss:
-        specifier: ^8.5.3
-        version: 8.5.3
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -44,9 +32,6 @@ importers:
       tailwind-merge:
         specifier: ^3.0.2
         version: 3.0.2
-      tailwindcss:
-        specifier: ^4.0.9
-        version: 4.0.9
       zustand:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@19.0.10)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0))
@@ -54,6 +39,12 @@ importers:
       '@eslint/js':
         specifier: ^9.21.0
         version: 9.21.0
+      '@tailwindcss/vite':
+        specifier: ^4.0.9
+        version: 4.0.9(vite@6.2.0(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.3))
+      '@tanstack/eslint-plugin-router':
+        specifier: ^1.105.0
+        version: 1.105.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.7.3)
       '@tanstack/router-devtools':
         specifier: ^1.112.13
         version: 1.112.13(@tanstack/react-router@1.112.13(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(csstype@3.1.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -75,6 +66,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.4
         version: 4.3.4(vite@6.2.0(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.3))
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.5.3)
       eslint:
         specifier: ^9.21.0
         version: 9.21.0(jiti@2.4.2)
@@ -87,12 +81,18 @@ importers:
       globals:
         specifier: ^15.15.0
         version: 15.15.0
+      postcss:
+        specifier: ^8.5.3
+        version: 8.5.3
       prettier:
         specifier: ^3.5.3
         version: 3.5.3
       prettier-plugin-tailwindcss:
         specifier: ^0.6.11
         version: 0.6.11(prettier@3.5.3)
+      tailwindcss:
+        specifier: ^4.0.9
+        version: 4.0.9
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.0.9)
@@ -610,6 +610,11 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6
 
+  '@tanstack/eslint-plugin-router@1.105.0':
+    resolution: {integrity: sha512-qrtXf8QVzmo+gPFHgz0a3Lqeuo+ebazjstncHyjcXU8vgwJ4n8cseW4LGhMLJZ6eimdFqbOvc1P5Fxjac+R1xQ==}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+
   '@tanstack/history@1.112.8':
     resolution: {integrity: sha512-+EPOvUtnA3PnIBF2oUhggdy7UrVimLZd1SpULhV1UiesNgKtmLjArO7ZdGPrRq7pRXhc8V0ZAWTI9vfplhZfeA==}
     engines: {node: '>=12'}
@@ -716,10 +721,6 @@ packages:
 
   '@types/react@19.0.10':
     resolution: {integrity: sha512-JuRQ9KXLEjaUNjTWpzuR231Z2WpIwczOkBEIvbHNCzQefFIT0L8IqE6NV6ULLyC1SI/i234JnDoMkfg+RjQj2g==}
-
-  '@types/xterm@3.0.0':
-    resolution: {integrity: sha512-+VaAJQmE7E1d1ebkIh/Zdc2mbXBVwxZGGSgqwzDPpk/HKo0mNT+iX5ZrnswztHSV+CDV+bURl7Yg7PWF7IZfXQ==}
-    deprecated: This is a stub types definition for xterm.js (https://github.com/sourcelair/xterm.js/). xterm.js provides its own type definitions, so you don't need @types/xterm installed!
 
   '@typescript-eslint/eslint-plugin@8.26.0':
     resolution: {integrity: sha512-cLr1J6pe56zjKYajK6SSSre6nl1Gj6xDp1TY0trpgPzjVbgDwd09v2Ws37LABxzkicmUjhEeg/fAUjPJJB1v5Q==}
@@ -1544,10 +1545,6 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
-  xterm@5.3.0:
-    resolution: {integrity: sha512-8QqjlekLUFTrU6x7xck1MsPzPA571K5zNqWm0M0oroYEWVOptZ0+ubQSkQ3uxIEhcIHRujJy6emDWX4A7qyFzg==}
-    deprecated: This package is now deprecated. Move to @xterm/xterm instead.
-
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
 
@@ -1980,6 +1977,14 @@ snapshots:
       tailwindcss: 4.0.9
       vite: 6.2.0(@types/node@22.13.9)(jiti@2.4.2)(lightningcss@1.29.1)(tsx@4.19.3)
 
+  '@tanstack/eslint-plugin-router@1.105.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.7.3)':
+    dependencies:
+      '@typescript-eslint/utils': 8.26.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.7.3)
+      eslint: 9.21.0(jiti@2.4.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
   '@tanstack/history@1.112.8': {}
 
   '@tanstack/react-router@1.112.13(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
@@ -2107,10 +2112,6 @@ snapshots:
   '@types/react@19.0.10':
     dependencies:
       csstype: 3.1.3
-
-  '@types/xterm@3.0.0':
-    dependencies:
-      xterm: 5.3.0
 
   '@typescript-eslint/eslint-plugin@8.26.0(@typescript-eslint/parser@8.26.0(eslint@9.21.0(jiti@2.4.2))(typescript@5.7.3))(eslint@9.21.0(jiti@2.4.2))(typescript@5.7.3)':
     dependencies:
@@ -2852,8 +2853,6 @@ snapshots:
       isexe: 2.0.0
 
   word-wrap@1.2.5: {}
-
-  xterm@5.3.0: {}
 
   yallist@3.1.1: {}
 
