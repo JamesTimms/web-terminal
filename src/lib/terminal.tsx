@@ -1,7 +1,9 @@
-import { useEffect, useRef } from "react";
-import { Terminal as XTerm } from "@xterm/xterm";
-import { FitAddon } from "@xterm/addon-fit";
+import { useEffect, useRef, forwardRef, HTMLAttributes } from "react";
+
+import { cn } from "~/lib/utils";
 import "@xterm/xterm/css/xterm.css";
+import { FitAddon } from "@xterm/addon-fit";
+import { Terminal as XTerm } from "@xterm/xterm";
 
 interface TerminalOptions {
   theme?: {
@@ -22,16 +24,21 @@ export class TerminalService {
   constructor(options: TerminalOptions = {}) {
     this.terminal = new XTerm({
       cursorBlink: true,
-      fontSize: options.fontSize ?? 16,
-      fontFamily: options.fontFamily ?? "monospace",
+      fontFamily: options.fontFamily || '"VT323", "Press Start 2P", monospace',
+      fontSize: options.fontSize || 18,
       theme: {
-        background: options.theme?.background ?? "#1a1b26",
-        foreground: options.theme?.foreground ?? "#a9b1d6",
-        cursor: options.theme?.cursor ?? "#c0caf5",
+        background: options.theme?.background || "#000000",
+        foreground: options.theme?.foreground || "#00ff00",
+        cursor: options.theme?.cursor || "#ff00ff",
+        // Add more 80s-style colors
+        brightGreen: "#00ff00",
+        brightMagenta: "#ff00ff",
+        brightCyan: "#00ffff",
+        brightYellow: "#ffff00",
+        brightBlue: "#0000ff",
+        brightRed: "#ff0000",
       },
-      convertEol: true,
-      scrollback: 1000,
-      rows: 24,
+      allowTransparency: true,
     });
 
     this.fitAddon = new FitAddon();
@@ -102,15 +109,31 @@ export class TerminalService {
 
   private writeWelcomeMessage() {
     this.terminal.writeln(
-      "\x1b[1;36mWelcome to TechyTimms Terminal v0.0.1\x1b[0m"
+      "\x1b[38;5;213m╔════════════════════════════════════════════════════════╗",
     );
     this.terminal.writeln(
-      "\x1b[90m─────────────────────────────────────\x1b[0m"
+      "║                                                        ║",
     );
-    this.terminal.writeln("🚀  Interactive terminal environment ready!");
-    this.terminal.writeln('📝  Type "help" for available commands');
-    this.terminal.writeln("🔍  Try typing some commands to get started");
-    this.terminal.write("\r\n");
+    this.terminal.writeln(
+      "║  \x1b[38;5;51mTECHY TIMMS RETRO TERMINAL v1.0\x1b[38;5;213m                       ║",
+    );
+    this.terminal.writeln(
+      "║  \x1b[38;5;226m© 1986 TECHY INDUSTRIES\x1b[38;5;213m                               ║",
+    );
+    this.terminal.writeln(
+      "║                                                        ║",
+    );
+    this.terminal.writeln(
+      "║  \x1b[38;5;118mType commands and press ENTER\x1b[38;5;213m                         ║",
+    );
+    this.terminal.writeln(
+      "║                                                        ║",
+    );
+    this.terminal.writeln(
+      "╚════════════════════════════════════════════════════════╝\x1b[0m",
+    );
+    this.terminal.writeln("");
+    this.writePrompt();
   }
 
   public fit() {
@@ -118,37 +141,57 @@ export class TerminalService {
   }
 }
 
-interface TerminalProps {
+interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
   options?: TerminalOptions;
 }
 
-export function Terminal({ options }: TerminalProps) {
-  const terminalRef = useRef<HTMLDivElement>(null);
-  const serviceRef = useRef<TerminalService | null>(null);
+export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
+  ({ options, className, ...props }, ref) => {
+    const terminalRef = useRef<HTMLDivElement>(null);
+    const serviceRef = useRef<TerminalService | null>(null);
 
-  useEffect(() => {
-    if (serviceRef.current || !terminalRef.current) return;
+    useEffect(() => {
+      if (serviceRef.current || !terminalRef.current) return;
 
-    const service = new TerminalService(options);
-    serviceRef.current = service;
+      const service = new TerminalService(options);
+      serviceRef.current = service;
 
-    service.mount(terminalRef.current);
-    service.fit();
+      service.mount(terminalRef.current);
+      service.fit();
 
-    const handleResize = () => service.fit();
-    window.addEventListener("resize", handleResize);
+      const handleResize = () => service.fit();
+      window.addEventListener("resize", handleResize);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      service.dispose();
-      serviceRef.current = null;
-    };
-  }, [options]);
+      return () => {
+        window.removeEventListener("resize", handleResize);
+        service.dispose();
+        serviceRef.current = null;
+      };
+    }, [options]);
 
-  return (
-    <div
-      ref={terminalRef}
-      className="h-[600px] w-full p-4 rounded-lg overflow-hidden bg-[#1a1b26] border border-gray-700 shadow-lg relative"
-    />
-  );
-}
+    return (
+      <div
+        ref={(node) => {
+          // Handle both refs
+          terminalRef.current = node;
+          if (typeof ref === "function") {
+            ref(node);
+          } else if (ref) {
+            ref.current = node;
+          }
+        }}
+        className={cn(
+          "relative overflow-hidden border-4 border-[#ff00ff] bg-black p-4 shadow-[0_0_10px_#ff00ff,0_0_20px_#00ffff]",
+          "before:absolute before:inset-0 before:bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]",
+          "before:pointer-events-none before:z-10 before:opacity-40",
+          "after:absolute after:inset-0 after:bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.15),rgba(0,0,0,0.15)_1px,transparent_1px,transparent_2px)]",
+          "after:pointer-events-none after:z-10 after:opacity-20",
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
+);
+
+Terminal.displayName = "Terminal";

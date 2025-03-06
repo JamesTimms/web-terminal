@@ -14,7 +14,7 @@ A personal website for James Timms. A modern, interactive terminal-based website
 
 - Create basic Terminal UI
 
-  - [ ] Implement main Terminal component
+  - [x] Implement main Terminal component
   - [ ] Add command input handling
   - [ ] Create command history storage
   - [ ] Style terminal appearance (dark background, colored text)
