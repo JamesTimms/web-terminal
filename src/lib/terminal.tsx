@@ -181,10 +181,10 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
           }
         }}
         className={cn(
-          "relative overflow-hidden border-4 border-[#ff00ff] bg-black p-4 shadow-[0_0_10px_#ff00ff,0_0_20px_#00ffff]",
-          "before:absolute before:inset-0 before:bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]",
+          "border-retro-magenta bg-retro-black shadow-retro-glow relative overflow-hidden border-2 p-4",
+          "before:bg-crt-overlay before:absolute before:inset-0",
           "before:pointer-events-none before:z-10 before:opacity-40",
-          "after:absolute after:inset-0 after:bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.15),rgba(0,0,0,0.15)_1px,transparent_1px,transparent_2px)]",
+          "after:bg-crt-scanlines after:absolute after:inset-0",
           "after:pointer-events-none after:z-10 after:opacity-20",
           className,
         )}
