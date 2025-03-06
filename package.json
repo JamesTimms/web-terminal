@@ -6,8 +6,8 @@
   "scripts": {
     "generate-routes": "tsr generate",
     "watch-routes": "tsr watch",
-    "dev": "pnpm run watch-routes && vite",
-    "build": "pnpm run generate-routes && tsc -b && vite build",
+    "dev": "vite",
+    "build": "vite build && tsc --noEmit",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -26,6 +26,7 @@
     "@eslint/js": "^9.21.0",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/eslint-plugin-router": "^1.105.0",
+    "@tanstack/router-cli": "^1.112.17",
     "@tanstack/router-devtools": "^1.112.13",
     "@tanstack/router-plugin": "^1.112.13",
     "@tanstack/router-vite-plugin": "^1.112.13",
