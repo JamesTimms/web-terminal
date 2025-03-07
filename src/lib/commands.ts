@@ -51,3 +51,64 @@ export const default_commands: Command[] = [
     },
   },
 ];
+
+interface Skill {
+  name: string;
+  level: number;
+}
+
+export const buildSkillCommand = (skills: (Skill | "break")[]): Command => {
+  return {
+    name: "skills",
+    description: "Display my skills with visual ratings",
+    execute: (_args, terminal) => {
+      const levels = [
+        { name: "Beginner", symbol: "⭐" },
+        { name: "Elementary", symbol: "⭐ ⭐" },
+        { name: "Intermediate", symbol: "⭐ ⭐ ⭐" },
+        { name: "Advanced", symbol: "⭐ ⭐ ⭐ ⭐" },
+        { name: "Expert", symbol: "⭐ ⭐ ⭐ ⭐ ⭐" },
+      ];
+
+      const longestName = skills.reduce(
+        (max, skill) =>
+          skill === "break" ? max : Math.max(max, skill.name.length),
+        0,
+      );
+      const totalWidth = longestName + 26;
+      const border = "*".repeat(totalWidth);
+      const sideBorder = "|";
+      const emptyLine = `${sideBorder}${" ".repeat(totalWidth - 2)}${sideBorder}`;
+
+      terminal.writeLine(border);
+      terminal.writeLine(
+        `${sideBorder}${" ".repeat(Math.floor((totalWidth - 12) / 2))}MY SKILLS${" ".repeat(Math.ceil((totalWidth - 12) / 2) + 1)}${sideBorder}`,
+      );
+      terminal.writeLine(border);
+      terminal.writeLine(emptyLine);
+
+      for (const skill of skills) {
+        if (skill === "break") {
+          terminal.writeLine(emptyLine);
+          continue;
+        }
+
+        const leftSpace = " ".repeat(3);
+        const padding = " ".repeat(longestName - skill.name.length + 5);
+        const levelSymbol = levels[skill.level].symbol;
+        const rightSpace = Math.max(
+          0,
+          totalWidth - longestName - levelSymbol.length - 11,
+        );
+
+        terminal.writeLine(
+          `${sideBorder}${leftSpace}${skill.name}${padding}${levelSymbol} ${" ".repeat(rightSpace)}${sideBorder}`,
+        );
+      }
+
+      terminal.writeLine(emptyLine);
+      terminal.writeLine(border);
+      terminal.writeLine("");
+    },
+  };
+};
