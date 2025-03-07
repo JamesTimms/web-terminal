@@ -66,7 +66,7 @@ export class TerminalService {
   }
 
   private handleEnter() {
-    this.terminal.write("\r\n");
+    this.returnLine();
 
     if (this.commandBuffer.trim()) {
       this.processCommand(this.commandBuffer);
@@ -135,12 +135,15 @@ export class TerminalService {
     this.terminal.writeln("🚀  Interactive terminal environment ready!");
     this.terminal.writeln('📝  Type "help" for available commands');
     this.terminal.writeln("🔍  Try typing some commands to get started");
-    this.terminal.write("\r\n");
+    this.returnLine();
   }
 
-  // Helper methods for commands
   public writeLine(text: string = "") {
     this.terminal.writeln(text);
+  }
+
+  public returnLine() {
+    this.terminal.write("\r\n");
   }
 
   public write(text: string) {

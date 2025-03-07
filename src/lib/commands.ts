@@ -32,4 +32,37 @@ export const default_commands: Command[] = [
       terminal.clear();
     },
   },
+  {
+    name: "about",
+    description: "Learn more about James",
+    execute: (_args, terminal) => {
+      terminal.writeLine(
+        "James is a fun loving workaholic who enjoys solving problems and building stuff.",
+      );
+      terminal.writeLine("Found of RaavaVPN, Mappa, and software engineer!");
+      terminal.writeLine(
+        "Currently two years deep into a PropTech rabbit hole 🐇",
+      );
+      terminal.writeLine("");
+      terminal.writeLine("Career Journey:");
+      terminal.writeLine(
+        "- Started making videogames at a small studio in Aberystwyth",
+      );
+      terminal.writeLine("- Co-founded the Devyard for indie game development");
+      terminal.writeLine("- Created RaavaVPN, a VPN service provider");
+      terminal.writeLine(
+        "- Worked at EE and BT for five years on projects ranging from",
+      );
+      terminal.writeLine("  SIM card cryptography to datacenter automation");
+      terminal.writeLine(
+        "- Transitioned to smaller companies doing DevOps & SRE",
+      );
+      terminal.writeLine("- Founded PropTech startup Reebric");
+      terminal.writeLine("- Participated in Y Combinator founder school");
+      terminal.writeLine("- Currently working with Wayhome 🏡");
+      terminal.writeLine("");
+      terminal.writeLine("Based in and in love with Bristol.");
+      terminal.writeLine("");
+    },
+  },
 ];

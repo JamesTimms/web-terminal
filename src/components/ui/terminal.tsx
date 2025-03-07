@@ -34,9 +34,6 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
           }
-          .xterm-screen {
-            padding: 12px !important;
-          }
         `;
         terminalRef.current.appendChild(style);
       }
@@ -55,9 +52,12 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       <div
         ref={ref}
         className={cn(
-          "overflow-hidden rounded-lg border-2 border-slate-500 shadow-lg",
+          "overflow-hidden rounded-lg border-2 border-slate-500 p-3 shadow-lg",
           className,
         )}
+        style={{
+          backgroundColor: options?.theme?.background || "#1a1b26",
+        }}
         {...props}
       >
         <div ref={terminalRef} className="h-full w-full" />

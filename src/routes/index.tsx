@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Terminal } from "~/lib/terminal";
+import { Terminal } from "~/components/ui/terminal";
 import { default_commands } from "~/lib/commands";
 
 export const Route = createFileRoute("/")({
@@ -19,6 +19,8 @@ export const Route = createFileRoute("/")({
             fontFamily: '"VT323", "Press Start 2P", monospace',
             lineHeight: 1.2,
             letterSpacing: 0.5,
+            cols: 120,
+            rows: 30,
           }}
           commands={default_commands}
         />
