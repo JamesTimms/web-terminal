@@ -1,6 +1,3 @@
-import { useEffect, useRef, forwardRef, HTMLAttributes } from "react";
-
-import { cn } from "~/lib/utils";
 import "@xterm/xterm/css/xterm.css";
 import { FitAddon } from "@xterm/addon-fit";
 import {
@@ -9,19 +6,44 @@ import {
   ITerminalInitOnlyOptions,
 } from "@xterm/xterm";
 
+export interface Command {
+  name: string;
+  description: string;
+  execute: (args: string[], terminal: TerminalService) => void;
+}
+
 export class TerminalService {
   private terminal: XTerm;
   private fitAddon: FitAddon;
   private commandBuffer = "";
   private hasInitalised = false;
+  public commands: Map<string, Command> = new Map();
 
-  constructor(options: ITerminalOptions & ITerminalInitOnlyOptions = {}) {
+  constructor(
+    options: ITerminalOptions & ITerminalInitOnlyOptions = {},
+    commands: Command[] = [],
+  ) {
     this.terminal = new XTerm(options);
 
     this.fitAddon = new FitAddon();
     this.terminal.loadAddon(this.fitAddon);
 
     this.setupKeyHandlers();
+    this.registerDefaultCommands(commands);
+  }
+
+  private registerDefaultCommands(commands: Command[]) {
+    for (const command of commands) {
+      this.registerCommand(command);
+    }
+  }
+
+  public registerCommand(command: Command) {
+    this.commands.set(command.name, command);
+  }
+
+  public removeCommand(name: string) {
+    this.commands.delete(name);
   }
 
   private setupKeyHandlers() {
@@ -45,9 +67,28 @@ export class TerminalService {
 
   private handleEnter() {
     this.terminal.write("\r\n");
-    // Here we'll later add command processing
+
+    if (this.commandBuffer.trim()) {
+      this.processCommand(this.commandBuffer);
+    }
+
     this.commandBuffer = "";
     this.writePrompt();
+  }
+
+  private processCommand(input: string) {
+    const parts = input.trim().split(/\s+/);
+    const commandName = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    const command = this.commands.get(commandName);
+
+    if (command) {
+      command.execute(args, this);
+    } else {
+      this.writeLine(`Command not found: ${commandName}`);
+      this.writeLine(`Type 'help' to see available commands`);
+    }
   }
 
   private handleBackspace() {
@@ -97,71 +138,20 @@ export class TerminalService {
     this.terminal.write("\r\n");
   }
 
+  // Helper methods for commands
+  public writeLine(text: string = "") {
+    this.terminal.writeln(text);
+  }
+
+  public write(text: string) {
+    this.terminal.write(text);
+  }
+
+  public clear() {
+    this.terminal.clear();
+  }
+
   public fit() {
     this.fitAddon.fit();
   }
 }
-
-interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
-  options?: ITerminalOptions & ITerminalInitOnlyOptions;
-}
-
-export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
-  ({ options, className, ...props }, ref) => {
-    const terminalRef = useRef<HTMLDivElement>(null);
-    const serviceRef = useRef<TerminalService | null>(null);
-
-    useEffect(() => {
-      if (serviceRef.current || !terminalRef.current) return;
-
-      const service = new TerminalService(options);
-      serviceRef.current = service;
-
-      service.mount(terminalRef.current);
-      service.fit();
-
-      if (terminalRef.current) {
-        // HACK: Hide scrollbar and add padding to the terminal
-        const style = document.createElement("style");
-        style.textContent = `
-          .xterm .xterm-viewport::-webkit-scrollbar { 
-            width: 0px !important;
-            height: 0px !important;
-          }
-          .xterm .xterm-viewport {
-            scrollbar-width: none !important;
-            -ms-overflow-style: none !important;
-          }
-          .xterm-screen {
-            padding: 12px !important;
-          }
-        `;
-        terminalRef.current.appendChild(style);
-      }
-
-      const handleResize = () => service.fit();
-      window.addEventListener("resize", handleResize);
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        service.dispose();
-        serviceRef.current = null;
-      };
-    }, [options]);
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "overflow-hidden rounded-lg border-2 border-slate-500 shadow-lg",
-          className,
-        )}
-        {...props}
-      >
-        <div ref={terminalRef} className="h-full w-full" />
-      </div>
-    );
-  },
-);
-
-Terminal.displayName = "Terminal";

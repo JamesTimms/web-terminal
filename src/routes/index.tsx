@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Terminal } from "~/lib/terminal";
+import { default_commands } from "~/lib/commands";
 
 export const Route = createFileRoute("/")({
   component: () => (
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/")({
             lineHeight: 1.2,
             letterSpacing: 0.5,
           }}
+          commands={default_commands}
         />
       </div>
     </div>
