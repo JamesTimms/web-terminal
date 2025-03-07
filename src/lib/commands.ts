@@ -37,31 +37,16 @@ export const default_commands: Command[] = [
     description: "Learn more about James",
     execute: (_args, terminal) => {
       terminal.writeLine(
-        "James is a fun loving workaholic who enjoys solving problems and building stuff.",
-      );
-      terminal.writeLine("Found of RaavaVPN, Mappa, and software engineer!");
-      terminal.writeLine(
-        "Currently two years deep into a PropTech rabbit hole 🐇",
+        "I'm a hacker, gamer, occasional apple tree climber, and newly minted dog dad. I love solving problems and drinking bubble tea🧋",
       );
       terminal.writeLine("");
-      terminal.writeLine("Career Journey:");
       terminal.writeLine(
-        "- Started making videogames at a small studio in Aberystwyth",
+        "Founder of RaavaVPN, Mappa and other startups. Loyal to a fault. Strong ally. Environmental Vegan.",
       );
-      terminal.writeLine("- Co-founded the Devyard for indie game development");
-      terminal.writeLine("- Created RaavaVPN, a VPN service provider");
-      terminal.writeLine(
-        "- Worked at EE and BT for five years on projects ranging from",
-      );
-      terminal.writeLine("  SIM card cryptography to datacenter automation");
-      terminal.writeLine(
-        "- Transitioned to smaller companies doing DevOps & SRE",
-      );
-      terminal.writeLine("- Founded PropTech startup Reebric");
-      terminal.writeLine("- Participated in Y Combinator founder school");
-      terminal.writeLine("- Currently working with Wayhome 🏡");
       terminal.writeLine("");
-      terminal.writeLine("Based in and in love with Bristol.");
+      terminal.writeLine(
+        "Started life making video games, continued as a sys admin, moved into DevOps, and now a full-stack engineer. Startup founder at heart and hacker for life!",
+      );
       terminal.writeLine("");
     },
   },
