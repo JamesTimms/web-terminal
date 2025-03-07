@@ -3,17 +3,11 @@ import { useEffect, useRef, forwardRef, HTMLAttributes } from "react";
 import { cn } from "~/lib/utils";
 import "@xterm/xterm/css/xterm.css";
 import { FitAddon } from "@xterm/addon-fit";
-import { Terminal as XTerm } from "@xterm/xterm";
-
-interface TerminalOptions {
-  theme?: {
-    background?: string;
-    foreground?: string;
-    cursor?: string;
-  };
-  fontSize?: number;
-  fontFamily?: string;
-}
+import {
+  Terminal as XTerm,
+  ITerminalOptions,
+  ITerminalInitOnlyOptions,
+} from "@xterm/xterm";
 
 export class TerminalService {
   private terminal: XTerm;
@@ -21,25 +15,8 @@ export class TerminalService {
   private commandBuffer = "";
   private hasInitalised = false;
 
-  constructor(options: TerminalOptions = {}) {
-    this.terminal = new XTerm({
-      cursorBlink: true,
-      fontFamily: options.fontFamily || '"VT323", "Press Start 2P", monospace',
-      fontSize: options.fontSize || 18,
-      theme: {
-        background: options.theme?.background || "#000000",
-        foreground: options.theme?.foreground || "#00ff00",
-        cursor: options.theme?.cursor || "#ff00ff",
-        // Add more 80s-style colors
-        brightGreen: "#00ff00",
-        brightMagenta: "#ff00ff",
-        brightCyan: "#00ffff",
-        brightYellow: "#ffff00",
-        brightBlue: "#0000ff",
-        brightRed: "#ff0000",
-      },
-      allowTransparency: true,
-    });
+  constructor(options: ITerminalOptions & ITerminalInitOnlyOptions = {}) {
+    this.terminal = new XTerm(options);
 
     this.fitAddon = new FitAddon();
     this.terminal.loadAddon(this.fitAddon);
@@ -109,31 +86,15 @@ export class TerminalService {
 
   private writeWelcomeMessage() {
     this.terminal.writeln(
-      "\x1b[38;5;213m╔════════════════════════════════════════════════════════╗",
+      "\x1b[1;36mWelcome to TechyTimms Terminal v0.0.1\x1b[0m",
     );
     this.terminal.writeln(
-      "║                                                        ║",
+      "\x1b[90m─────────────────────────────────────\x1b[0m",
     );
-    this.terminal.writeln(
-      "║  \x1b[38;5;51mTECHY TIMMS RETRO TERMINAL v1.0\x1b[38;5;213m                       ║",
-    );
-    this.terminal.writeln(
-      "║  \x1b[38;5;226m© 1986 TECHY INDUSTRIES\x1b[38;5;213m                               ║",
-    );
-    this.terminal.writeln(
-      "║                                                        ║",
-    );
-    this.terminal.writeln(
-      "║  \x1b[38;5;118mType commands and press ENTER\x1b[38;5;213m                         ║",
-    );
-    this.terminal.writeln(
-      "║                                                        ║",
-    );
-    this.terminal.writeln(
-      "╚════════════════════════════════════════════════════════╝\x1b[0m",
-    );
-    this.terminal.writeln("");
-    this.writePrompt();
+    this.terminal.writeln("🚀  Interactive terminal environment ready!");
+    this.terminal.writeln('📝  Type "help" for available commands');
+    this.terminal.writeln("🔍  Try typing some commands to get started");
+    this.terminal.write("\r\n");
   }
 
   public fit() {
@@ -142,7 +103,7 @@ export class TerminalService {
 }
 
 interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
-  options?: TerminalOptions;
+  options?: ITerminalOptions & ITerminalInitOnlyOptions;
 }
 
 export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
@@ -159,6 +120,25 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       service.mount(terminalRef.current);
       service.fit();
 
+      if (terminalRef.current) {
+        // HACK: Hide scrollbar and add padding to the terminal
+        const style = document.createElement("style");
+        style.textContent = `
+          .xterm .xterm-viewport::-webkit-scrollbar { 
+            width: 0px !important;
+            height: 0px !important;
+          }
+          .xterm .xterm-viewport {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+          .xterm-screen {
+            padding: 12px !important;
+          }
+        `;
+        terminalRef.current.appendChild(style);
+      }
+
       const handleResize = () => service.fit();
       window.addEventListener("resize", handleResize);
 
@@ -171,25 +151,15 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
 
     return (
       <div
-        ref={(node) => {
-          // Handle both refs
-          terminalRef.current = node;
-          if (typeof ref === "function") {
-            ref(node);
-          } else if (ref) {
-            ref.current = node;
-          }
-        }}
+        ref={ref}
         className={cn(
-          "border-retro-magenta bg-retro-black shadow-retro-glow relative overflow-hidden border-2 p-4",
-          "before:bg-crt-overlay before:absolute before:inset-0",
-          "before:pointer-events-none before:z-10 before:opacity-40",
-          "after:bg-crt-scanlines after:absolute after:inset-0",
-          "after:pointer-events-none after:z-10 after:opacity-20",
+          "overflow-hidden rounded-lg border-2 border-slate-500 shadow-lg",
           className,
         )}
         {...props}
-      />
+      >
+        <div ref={terminalRef} className="h-full w-full" />
+      </div>
     );
   },
 );
