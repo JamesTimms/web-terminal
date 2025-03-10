@@ -1,21 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-
 import { Terminal } from "~/components/ui/terminal";
-import {
-  achievements,
-  certifications,
-  skills,
-  workExperience,
-} from "~/data/james";
-import {
-  default_commands,
-  buildSkillCommand,
-  buildCertificationsCommand,
-  buildWorkExperienceCommand,
-  buildAchievementsCommand,
-} from "~/lib/commands";
+import { default_commands } from "~/lib/commands";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/pc")({
   component: () => (
     <div className="min-h-screen min-w-screen bg-slate-700 py-12">
       <div className="container mx-auto max-w-7xl px-4 py-4">
@@ -32,25 +19,11 @@ export const Route = createFileRoute("/")({
               fontFamily: '"VT323", "Press Start 2P", monospace',
               lineHeight: 1.25,
               letterSpacing: 1.65,
-              cols: 140,
-              rows: 34,
+              cols: 80,
+              rows: 24,
             }}
-            commands={[
-              ...default_commands,
-              buildSkillCommand(skills),
-              buildWorkExperienceCommand(workExperience),
-              buildCertificationsCommand(certifications),
-              buildAchievementsCommand(achievements),
-            ]}
+            commands={[...default_commands]}
           />
-          {/* <div
-            className="overflow-hidden rounded-lg border-2 border-slate-500 p-8 shadow-lg"
-            style={{
-              backgroundColor: "#1a1b26",
-            }}
-          >
-            <div className="h-[800px] w-full" />
-          </div> */}
           <div className="crt-glow blue-white"></div>
           <div className="crt-rgb"></div>
           <div className="crt-scanlines"></div>
