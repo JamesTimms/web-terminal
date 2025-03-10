@@ -20,7 +20,6 @@ A personal website for James Timms. A modern, interactive terminal-based website
   - [x] `about`: Show personal introduction
   - [x] `skills`: List technical skills and proficiencies
   - [ ] `experience`: Display work history and roles
-  - [ ] `projects`: Showcase portfolio projects
 
 ### Future Enhancements
 

@@ -57,6 +57,47 @@ interface Skill {
   level: number;
 }
 
+interface WorkExperience {
+  company: string;
+  role: string;
+  period: string;
+  description: string[];
+}
+
+export const buildWorkExperienceCommand = (
+  experiences: WorkExperience[],
+): Command => {
+  return {
+    name: "experience",
+    description: "Display my work experience",
+    execute: (_args, terminal) => {
+      terminal.writeLine("\x1b[1;36m🚀 WORK EXPERIENCE\x1b[0m");
+      terminal.writeLine(
+        "\x1b[90m─────────────────────────────────────\x1b[0m",
+      );
+      terminal.writeLine("");
+
+      for (const exp of experiences) {
+        terminal.writeLine(
+          `\x1b[1;33m${exp.company}\x1b[0m - \x1b[1m${exp.role}\x1b[0m`,
+        );
+        terminal.writeLine(`\x1b[90m${exp.period}\x1b[0m`);
+        terminal.writeLine("");
+
+        for (const line of exp.description) {
+          terminal.writeLine(`• ${line}`);
+        }
+
+        terminal.writeLine("");
+        terminal.writeLine(
+          "\x1b[90m─────────────────────────────────────\x1b[0m",
+        );
+        terminal.writeLine("");
+      }
+    },
+  };
+};
+
 export const buildSkillCommand = (skills: (Skill | "break")[]): Command => {
   return {
     name: "skills",
