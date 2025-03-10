@@ -52,7 +52,7 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       <div
         ref={ref}
         className={cn(
-          "overflow-hidden rounded-lg border-2 border-slate-500 p-4 shadow-lg",
+          "overflow-hidden rounded-lg border-2 border-slate-500 p-8 shadow-lg",
           className,
         )}
         style={{
