@@ -9,6 +9,7 @@ import {
 export interface Command {
   name: string;
   description: string;
+  aliases?: string[];
   execute: (args: string[], terminal: TerminalService) => void;
 }
 
@@ -18,6 +19,7 @@ export class TerminalService {
   private commandBuffer = "";
   private hasInitalised = false;
   public commands: Map<string, Command> = new Map();
+  private aliases: Map<string, string> = new Map();
   private commandHistory: string[] = [];
   private historyIndex: number = -1;
   private currentInputBuffer: string = "";
@@ -43,9 +45,23 @@ export class TerminalService {
 
   public registerCommand(command: Command) {
     this.commands.set(command.name, command);
+
+    if (command.aliases && command.aliases.length > 0) {
+      for (const alias of command.aliases) {
+        this.aliases.set(alias, command.name);
+      }
+    }
   }
 
   public removeCommand(name: string) {
+    const command = this.commands.get(name);
+
+    if (command?.aliases) {
+      for (const alias of command.aliases) {
+        this.aliases.delete(alias);
+      }
+    }
+
     this.commands.delete(name);
   }
 
@@ -96,7 +112,9 @@ export class TerminalService {
     const commandName = parts[0].toLowerCase();
     const args = parts.slice(1);
 
-    const command = this.commands.get(commandName);
+    // Check if the command is an alias and get the actual command name
+    const actualCommandName = this.aliases.get(commandName) || commandName;
+    const command = this.commands.get(actualCommandName);
 
     if (command) {
       command.execute(args, this);

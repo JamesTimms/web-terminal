@@ -12,14 +12,40 @@ export const default_commands: Command[] = [
         (left, right) => left.name.localeCompare(right.name),
       );
 
-      const longestName = sortedCommands.reduce(
-        (max, cmd) => Math.max(max, cmd.name.length),
-        0,
-      );
+      const longestNameWithAliases = sortedCommands.reduce((max, cmd) => {
+        const aliasesStr = cmd.aliases ? `, ${cmd.aliases.join(", ")}` : "";
+        return Math.max(max, cmd.name.length + aliasesStr.length);
+      }, 0);
 
       for (const cmd of sortedCommands) {
-        const padding = " ".repeat(longestName - cmd.name.length + 2);
-        terminal.writeLine(`  ${cmd.name}${padding}${cmd.description}`);
+        const aliasesStr = cmd.aliases ? `, ${cmd.aliases.join(", ")}` : "";
+        const commandWithAliases = `${cmd.name}${aliasesStr}`;
+
+        const padding = " ".repeat(
+          longestNameWithAliases - commandWithAliases.length + 2,
+        );
+        terminal.writeLine(
+          `  ${commandWithAliases}${padding}${cmd.description}`,
+        );
+
+        const commandStr = cmd.execute.toString();
+
+        const hasOptions = {
+          summary:
+            commandStr.includes("--summary") || commandStr.includes("-s"),
+          help: commandStr.includes("--help") || commandStr.includes("-h"),
+        };
+
+        const options = [];
+        if (hasOptions.summary) options.push("--summary, -s (summary view)");
+        if (hasOptions.help) options.push("--help, -h (show help)");
+
+        if (options.length > 0) {
+          const optionsPadding = " ".repeat(longestNameWithAliases + 2);
+          terminal.writeLine(
+            `  ${optionsPadding}\x1b[37m${options.join(" | ")}\x1b[0m`,
+          );
+        }
       }
 
       terminal.writeLine("");
@@ -28,6 +54,7 @@ export const default_commands: Command[] = [
   {
     name: "clear",
     description: "Clear the terminal screen",
+    aliases: ["cls"],
     execute: (_args, terminal) => {
       terminal.clear();
     },
@@ -61,6 +88,7 @@ export interface WorkExperience {
   company: string;
   role: string;
   period: string;
+  location: string;
   description: string[];
 }
 
@@ -103,7 +131,10 @@ export const buildWorkExperienceCommand = (
   return {
     name: "experience",
     description: "Display my work experience",
-    execute: (_args, terminal) => {
+    aliases: ["exp"],
+    execute: (args, terminal) => {
+      const showSummary = args.includes("--summary") || args.includes("-s");
+
       terminal.writeLine("\x1b[1;36m🚀 WORK EXPERIENCE\x1b[0m");
       terminal.writeLine(
         "\x1b[90m─────────────────────────────────────\x1b[0m",
@@ -111,17 +142,25 @@ export const buildWorkExperienceCommand = (
       terminal.writeLine("");
 
       for (const exp of experiences) {
+        if (showSummary) {
+          terminal.writeLine(
+            `\x1b[1;33m${exp.company}\x1b[0m \x1b[1m${exp.role}\x1b[0m \x1b[90m${exp.period}`,
+          );
+          continue;
+        }
+
         terminal.writeLine(
           `\x1b[1;33m${exp.company}\x1b[0m - \x1b[1m${exp.role}\x1b[0m`,
         );
-        terminal.writeLine(`\x1b[90m${exp.period}\x1b[0m`);
+        terminal.writeLine(`\x1b[90m${exp.period} | ${exp.location}\x1b[0m`);
+
         terminal.writeLine("");
 
         for (const line of exp.description) {
           terminal.writeLine(`• ${line}`);
         }
-
         terminal.writeLine("");
+
         terminal.writeLine(
           "\x1b[90m─────────────────────────────────────\x1b[0m",
         );
@@ -193,6 +232,7 @@ export const buildAchievementsCommand = (
   return {
     name: "achievements",
     description: "Display my achievements and hobbies",
+    aliases: ["ach"],
     execute: (_args, terminal) => {
       terminal.writeLine("\x1b[1;35m🌟 ACHIEVEMENTS & HOBBIES\x1b[0m");
       terminal.writeLine(

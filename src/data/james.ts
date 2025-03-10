@@ -42,7 +42,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "5DAI",
     role: "Senior Engineer (Contractor)",
-    period: "Jan 2025 - Feb 2025 | London (hybrid), UK",
+    period: "Jan 2025 - Feb 2025",
+    location: "London (hybrid), UK",
     description: [
       "Acted as AI solution architect while on-boarding enterprise customers, supporting in meetings and by writing a script to get around roadmap limitations. This led to happily on-boarded users.",
       "Delivered a key product for a big customer while navigating ever-changing feature requirements. This contributed towards the company's roadmap during a turbulent time, potentially helping their big customer to renew.",
@@ -52,7 +53,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "Mappa",
     role: "CTO & Co-Founder",
-    period: "Jul 2023 - current | London (remote), UK",
+    period: "Jul 2023 - current",
+    location: "London (remote), UK",
     description: [
       "Designed & built Mappa's backend APIs (Python, FastAPI, Pydantic), infrastructure (AWS) and frontend (React, TypeScript, Vite). Lead to > 1000 users with detailed product usage insights.",
       "Got accepted into and attended Geovation's accelerator.",
@@ -72,7 +74,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "Onfido",
     role: "Senior DevOps Engineer",
-    period: "Jan 2023 - Jul 2023 | London (remote), UK",
+    period: "Jan 2023 - Jul 2023",
+    location: "London (remote), UK",
     description: [
       "Designed and implemented new incident response system, coordinating with senior leadership between support and engineering teams.",
       "Actively involved in incident response for the entire engineering team.",
@@ -88,7 +91,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "Wayhome",
     role: "Senior DevSecOps Engineer",
-    period: "April 2021 - Nov 2022 | London (remote), UK",
+    period: "April 2021 - Nov 2022",
+    location: "London (remote), UK",
     description: [
       "Built our SRE slack-based incident response system & process.",
       "Lead high-level planning on OKRs, Standards, & Roadmaps.",
@@ -109,7 +113,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "Reebric",
     role: "Founder",
-    period: "Nov 2020 - April 2021 | Bristol (remote), UK",
+    period: "Nov 2020 - April 2021",
+    location: "Bristol (remote), UK",
     description: [
       "Conducted user interviews with renters, homeowners, & investors.",
       "Heavily researched PropTech market, specifically in the UK.",
@@ -120,7 +125,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "Webgains",
     role: "DevSecOps Engineer & SRE",
-    period: "June 2020 - April 2021 | Bristol, UK",
+    period: "June 2020 - April 2021",
+    location: "Bristol, UK",
     description: [
       "Designed and migrated a new AWS cloud architecture for hardened security.",
       "Built security & automation tools using Python, Ansible, Terraform and Docker.",
@@ -135,7 +141,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "BT",
     role: "Infrastructure Designer/Automation & Build Specialist",
-    period: "Oct 2017 - June 2020 | Bristol, UK",
+    period: "Oct 2017 - June 2020",
+    location: "Bristol, UK",
     description: [
       "Admin of hypervisors (ESXi), vSphere, Linux & Windows systems and more.",
       "Worked with resilient multi-site systems with vastly complex networks.",
@@ -148,7 +155,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "EE/BT",
     role: "Graduate Trainee",
-    period: "Sep 2015 - Oct 2017 | Bristol, UK",
+    period: "Sep 2015 - Oct 2017",
+    location: "Bristol, UK",
     description: [
       "Won first place in a company wide Graduate Event leading to the BT Bus project, a Graduate Recruitment campaign with sponsorship from Directors.",
       "Built a simple Erlang web framework for mobile core network web apps.",
@@ -159,6 +167,7 @@ export const workExperience: WorkExperience[] = [
     company: "Fire Ferrets Limited",
     role: "Director",
     period: "May 2015 - Ongoing",
+    location: "Remote",
     description: [
       "Founded a VPN service provider with over 500 customer.",
       "Built website using PHP, Laravel and Vue.js hosted on Digital Ocean.",
@@ -167,7 +176,8 @@ export const workExperience: WorkExperience[] = [
   {
     company: "West Coast Software",
     role: "Junior Programmer",
-    period: "June 2013 - Aug 2014 | Aberystwyth, UK",
+    period: "June 2013 - Aug 2014",
+    location: "Aberystwyth, UK",
     description: [],
   },
 ];
