@@ -18,6 +18,9 @@ export class TerminalService {
   private commandBuffer = "";
   private hasInitalised = false;
   public commands: Map<string, Command> = new Map();
+  private commandHistory: string[] = [];
+  private historyIndex: number = -1;
+  private currentInputBuffer: string = "";
 
   constructor(
     options: ITerminalOptions & ITerminalInitOnlyOptions = {},
@@ -57,6 +60,14 @@ export class TerminalService {
         case "Backspace":
           this.handleBackspace();
           break;
+        case "ArrowUp":
+          ev.preventDefault();
+          this.handleArrowUp();
+          break;
+        case "ArrowDown":
+          ev.preventDefault();
+          this.handleArrowDown();
+          break;
         default:
           if (!ev.ctrlKey && !ev.altKey) {
             this.handleCharacter(key);
@@ -69,6 +80,10 @@ export class TerminalService {
     this.returnLine();
 
     if (this.commandBuffer.trim()) {
+      this.commandHistory.push(this.commandBuffer);
+      this.historyIndex = -1;
+      this.currentInputBuffer = "";
+
       this.processCommand(this.commandBuffer);
     }
 
@@ -103,6 +118,41 @@ export class TerminalService {
     this.terminal.write(char);
   }
 
+  private handleArrowUp() {
+    if (this.historyIndex === -1) {
+      this.currentInputBuffer = this.commandBuffer;
+    }
+
+    if (this.historyIndex < this.commandHistory.length - 1) {
+      this.historyIndex++;
+      this.replaceCommandBuffer(
+        this.commandHistory[this.commandHistory.length - 1 - this.historyIndex],
+      );
+    }
+  }
+
+  private handleArrowDown() {
+    if (this.historyIndex > 0) {
+      this.historyIndex--;
+      this.replaceCommandBuffer(
+        this.commandHistory[this.commandHistory.length - 1 - this.historyIndex],
+      );
+    } else if (this.historyIndex === 0) {
+      this.historyIndex = -1;
+      this.replaceCommandBuffer(this.currentInputBuffer);
+    }
+  }
+
+  private replaceCommandBuffer(newCommand: string) {
+    const charsToDelete = this.commandBuffer.length;
+    for (let i = 0; i < charsToDelete; i++) {
+      this.terminal.write("\b \b");
+    }
+
+    this.commandBuffer = newCommand;
+    this.terminal.write(newCommand);
+  }
+
   private writePrompt() {
     this.terminal.write("$ ");
   }
@@ -112,6 +162,12 @@ export class TerminalService {
 
     this.terminal.open(container);
     this.fitAddon.fit();
+
+    container.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+      }
+    });
 
     if (!this.hasInitalised) {
       this.writeWelcomeMessage();
