@@ -54,6 +54,7 @@ export const Route = createFileRoute("/")({
           <div className="crt-rgb"></div>
           <div className="crt-scanlines"></div>
           <div className="crt-curvature"></div>
+          <div className="crt-flicker white-phosphor"></div>
         </div>
       </div>
     </div>

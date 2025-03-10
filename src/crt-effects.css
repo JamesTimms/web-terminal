@@ -55,3 +55,79 @@
   z-index: 11;
   border-radius: 20px;
 }
+
+@keyframes crt-flicker {
+  0% {
+    opacity: 0.97;
+  }
+  3% {
+    opacity: 0.99;
+  }
+  8% {
+    opacity: 0.94;
+  }
+  10% {
+    opacity: 0.98;
+  }
+  20% {
+    opacity: 0.92;
+  }
+  25% {
+    opacity: 0.97;
+  }
+  40% {
+    opacity: 0.94;
+  }
+  50% {
+    opacity: 0.98;
+  }
+  70% {
+    opacity: 0.93;
+  }
+  80% {
+    opacity: 0.97;
+  }
+  100% {
+    opacity: 0.96;
+  }
+}
+
+.crt-flicker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 12;
+  mix-blend-mode: normal;
+  animation: crt-flicker 3.7s infinite alternate;
+  background-color: transparent;
+}
+.crt-flicker.gradient {
+  /* 90s games console style */
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 50, 0.02) 0%,
+    rgba(0, 200, 255, 0.01) 50%,
+    rgba(255, 100, 200, 0.02) 100%
+  );
+}
+.crt-flicker.sepia-tone {
+  background-color: rgba(255, 240, 200, 0.04);
+}
+.crt-flicker.green-phosphor {
+  /* 70-80s green monochrome terminals */
+  background-color: rgba(0, 255, 38, 0.04);
+}
+.crt-flicker.amber-tone {
+  /* 80s amber monochrome word processing */
+  background-color: rgba(255, 176, 0, 0.035);
+}
+.crt-flicker.blue-green-phosphor {
+  background-color: rgba(0, 235, 200, 0.03);
+}
+.crt-flicker.white-phosphor {
+  /* 90s style */
+  background-color: rgba(220, 230, 255, 0.025);
+}
