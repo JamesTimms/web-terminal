@@ -52,17 +52,44 @@ export const default_commands: Command[] = [
   },
 ];
 
-interface Skill {
+export interface Skill {
   name: string;
   level: number;
 }
 
-interface WorkExperience {
+export interface WorkExperience {
   company: string;
   role: string;
   period: string;
   description: string[];
 }
+
+export interface Certification {
+  name: string;
+  year: string;
+}
+
+export const buildCertificationsCommand = (
+  certifications: Certification[],
+): Command => {
+  return {
+    name: "certifications",
+    description: "Display my professional certifications",
+    execute: (_args, terminal) => {
+      terminal.writeLine("\x1b[1;36m🏆 CERTIFICATIONS\x1b[0m");
+      terminal.writeLine(
+        "\x1b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m",
+      );
+      terminal.writeLine("");
+
+      for (const cert of certifications) {
+        terminal.writeLine(`\x1b[1;33m${cert.name}\x1b[0m`);
+        terminal.writeLine(`\x1b[90m${cert.year}\x1b[0m`);
+        terminal.writeLine("");
+      }
+    },
+  };
+};
 
 export const buildWorkExperienceCommand = (
   experiences: WorkExperience[],
