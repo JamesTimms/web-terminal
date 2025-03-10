@@ -10,6 +10,7 @@ export interface Command {
   name: string;
   description: string;
   aliases?: string[];
+  options?: string[];
   execute: (args: string[], terminal: TerminalService) => void;
 }
 
