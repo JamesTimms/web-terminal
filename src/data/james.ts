@@ -1,4 +1,9 @@
-import { Skill, WorkExperience, Certification } from "~/lib/commands";
+import {
+  Skill,
+  WorkExperience,
+  Certification,
+  Achievement,
+} from "~/lib/commands";
 
 export const skills: (Skill | "break")[] = [
   // Development Skills
@@ -183,5 +188,26 @@ export const certifications: Certification[] = [
   {
     name: "GCP Associate Cloud Engineer",
     year: "2019",
+  },
+];
+
+export const achievements: Achievement[] = [
+  {
+    title: "Foster Care Survivor",
+    description:
+      "I'm the first and only foster care kid to go to uni from my county council",
+    icon: "🏛️",
+  },
+  {
+    title: "Electrical Engineering",
+    description:
+      "Built my own keyboard and finished a Mark Rober electrical engineering course, where I built a digital sundial and a Raspberry Pi powered musical keyboard.",
+    icon: "🖥️",
+  },
+  {
+    title: "Esports",
+    description:
+      "Sponsored to play Hearthstone for a year with highest finish being third place at Insomnia. Captain of Aberystwyth University League of Legends team with a 1st place finish at NUEL.",
+    icon: "🏆",
   },
 ];

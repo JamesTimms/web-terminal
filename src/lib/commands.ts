@@ -69,6 +69,12 @@ export interface Certification {
   year: string;
 }
 
+export interface Achievement {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
 export const buildCertificationsCommand = (
   certifications: Certification[],
 ): Command => {
@@ -177,6 +183,30 @@ export const buildSkillCommand = (skills: (Skill | "break")[]): Command => {
       terminal.writeLine(emptyLine);
       terminal.writeLine(border);
       terminal.writeLine("");
+    },
+  };
+};
+
+export const buildAchievementsCommand = (
+  achievements: Achievement[],
+): Command => {
+  return {
+    name: "achievements",
+    description: "Display my achievements and hobbies",
+    execute: (_args, terminal) => {
+      terminal.writeLine("\x1b[1;35m🌟 ACHIEVEMENTS & HOBBIES\x1b[0m");
+      terminal.writeLine(
+        "\x1b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m",
+      );
+      terminal.writeLine("");
+
+      for (const achievement of achievements) {
+        terminal.writeLine(
+          `\x1b[1;33m${achievement.icon || "✨"} ${achievement.title}\x1b[0m`,
+        );
+        terminal.writeLine(`${achievement.description}`);
+        terminal.writeLine("");
+      }
     },
   };
 };

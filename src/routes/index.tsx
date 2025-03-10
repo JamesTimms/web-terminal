@@ -1,12 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Terminal } from "~/components/ui/terminal";
-import { certifications, skills, workExperience } from "~/data/james";
+import {
+  achievements,
+  certifications,
+  skills,
+  workExperience,
+} from "~/data/james";
 import {
   default_commands,
   buildSkillCommand,
   buildCertificationsCommand,
   buildWorkExperienceCommand,
+  buildAchievementsCommand,
 } from "~/lib/commands";
 
 export const Route = createFileRoute("/")({
@@ -33,6 +39,7 @@ export const Route = createFileRoute("/")({
             buildSkillCommand(skills),
             buildWorkExperienceCommand(workExperience),
             buildCertificationsCommand(certifications),
+            buildAchievementsCommand(achievements),
           ]}
         />
       </div>
