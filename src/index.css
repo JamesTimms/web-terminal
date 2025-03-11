@@ -2,108 +2,18 @@
 @import "./crt-effects.css";
 
 @theme {
-  --color-retro-black: #000000;
-  --color-retro-green: #00ff00;
-  --color-retro-magenta: #ff00ff;
-  --color-retro-cyan: #00ffff;
-  --color-retro-yellow: #ffff00;
-  --color-retro-blue: #0000ff;
-  --color-retro-red: #ff0000;
-  --color-retro-purple: #780aaa;
-
   --font-retro: "VT323", "Press Start 2P", monospace;
   --font-pixel: "Press Start 2P", monospace;
   --font-terminal: "VT323", monospace;
 
-  --shadow-retro-glow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-  --shadow-retro-magenta: 0 0 10px rgba(255, 0, 255, 0.5);
-  --shadow-retro-cyan: 0 0 10px rgba(0, 255, 255, 0.5);
-  --shadow-retro-yellow: 0 0 10px rgba(255, 255, 0, 0.5);
-
-  --retro-text-glow: 0 0 10px rgba(255, 0, 255, 0.8);
+  --screen-radius: 20px;
 }
 
-@layer components {
-  .bg-retro-grid {
-    background-image:
-      radial-gradient(
-        circle at center,
-        rgba(120, 0, 170, 0.15) 0,
-        rgba(0, 0, 0, 0.75) 100%
-      ),
-      linear-gradient(to right, #000 1px, transparent 1px),
-      linear-gradient(to bottom, #000 1px, transparent 1px);
-    background-size:
-      100% 100%,
-      40px 40px,
-      40px 40px;
-  }
-
-  .bg-crt-overlay {
-    background-image:
-      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-      linear-gradient(
-        90deg,
-        rgba(255, 0, 0, 0.06),
-        rgba(0, 255, 0, 0.02),
-        rgba(0, 0, 255, 0.06)
-      );
-  }
-
-  .bg-crt-scanlines {
-    background-image: repeating-linear-gradient(
-      0deg,
-      rgba(0, 0, 0, 0.15),
-      rgba(0, 0, 0, 0.15) 1px,
-      transparent 1px,
-      transparent 2px
-    );
-  }
-
-  .bg-retro-gradient {
-    background-image: linear-gradient(to right, #ff00ff, #00ffff, #ff00ff);
-  }
-
-  .shadow-retro-glow {
-    box-shadow: var(--shadow-retro-glow);
-  }
-
-  .shadow-retro-magenta {
-    box-shadow: var(--shadow-retro-magenta);
-  }
-
-  .shadow-retro-cyan {
-    box-shadow: var(--shadow-retro-cyan);
-  }
-
-  .shadow-retro-yellow {
-    box-shadow: var(--shadow-retro-yellow);
-  }
-
-  .retro-text-glow {
-    filter: drop-shadow(var(--retro-text-glow));
-  }
-
-  .font-retro {
-    font-family: var(--font-retro);
-  }
-
-  .font-pixel {
-    font-family: var(--font-pixel);
-  }
-
-  .font-terminal {
-    font-family: var(--font-terminal);
-  }
-}
-
-/* Base styles for better font rendering */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Reset body margin and set minimum width */
 body {
   margin: 0;
   min-width: 320px;

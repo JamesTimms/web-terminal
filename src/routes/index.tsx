@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Terminal } from "~/components/ui/terminal";
+import { CrtFilters } from "~/components/CrtFilters";
 import {
   achievements,
   certifications,
@@ -19,7 +20,8 @@ export const Route = createFileRoute("/")({
   component: () => (
     <div className="min-h-screen min-w-screen bg-slate-700 py-12">
       <div className="container mx-auto max-w-7xl px-4 py-4">
-        <div className="terminal-wrapper">
+        <div className="terminal-wrapper chromatic-filter-subtle">
+          <CrtFilters />
           <Terminal
             options={{
               theme: {
@@ -44,9 +46,17 @@ export const Route = createFileRoute("/")({
             ]}
           />
           {/* <div
-            className="overflow-hidden rounded-lg border-2 border-slate-500 p-8 shadow-lg"
+            className="overflow-hidden rounded-lg border-2 p-8 shadow-lg"
             style={{
-              backgroundColor: "#1a1b26",
+              background: `repeating-linear-gradient(
+                90deg,
+                rgba(255,0,0,1.0),
+                rgba(255,0,0,1.0) 20px,
+                rgba(0,255,0,1.0) 20px,
+                rgba(0,255,0,1.0) 40px,
+                rgba(0,0,255,1.0) 40px,
+                rgba(0,0,255,1.0) 60px
+              )`,
             }}
           >
             <div className="h-[800px] w-full" />

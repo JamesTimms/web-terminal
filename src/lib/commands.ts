@@ -45,7 +45,7 @@ export const default_commands: Command[] = [
     description: "Learn more about James",
     execute: (_args, terminal) => {
       terminal.writeLine(
-        "I'm a hacker, gamer, occasional apple tree climber, and newly minted dog dad. I love solving problems and drinking bubble tea🧋",
+        "I'm a founder, hacker, gamer, occasional apple tree climber, and newly minted dog dad. I love solving problems and drinking bubble tea🧋",
       );
       terminal.writeLine("");
       terminal.writeLine(

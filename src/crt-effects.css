@@ -1,7 +1,23 @@
 .terminal-wrapper {
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: var(--screen-radius);
+}
+
+.chromatic-filter {
+  filter: url("#chromatic-aberration-normal");
+}
+
+.chromatic-filter-subtle {
+  filter: url("#chromatic-aberration-subtle");
+}
+
+.chromatic-filter-strong {
+  filter: url("#chromatic-aberration-strong");
+}
+
+.chromatic-filter-extreme {
+  filter: url("#chromatic-aberration-extreme");
 }
 
 .crt-glow {
@@ -15,7 +31,7 @@
   box-shadow:
     0 0 10px rgba(10, 255, 10, 0.4),
     inset 0 0 15px rgba(10, 255, 10, 0.4);
-  border-radius: 20px;
+  border-radius: var(--screen-radius);
   opacity: 0.7;
   mix-blend-mode: screen;
 }
@@ -89,7 +105,7 @@
   );
   pointer-events: none;
   z-index: 11;
-  border-radius: 20px;
+  border-radius: var(--screen-radius);
 }
 
 @keyframes crt-flicker {
