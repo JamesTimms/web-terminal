@@ -51,10 +51,7 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          "overflow-hidden rounded-lg border-2 border-slate-500 p-8 shadow-lg",
-          className,
-        )}
+        className={cn("overflow-hidden p-12", className)}
         style={{
           backgroundColor: options?.theme?.background || "#1a1b26",
         }}
