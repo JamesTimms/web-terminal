@@ -24,6 +24,7 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       service.fit();
 
       if (terminalRef.current) {
+        // HACK: Hide scrollbar
         const style = document.createElement("style");
         style.textContent = `
           .xterm-viewport::-webkit-scrollbar { 
@@ -55,34 +56,36 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
         style={{
           backgroundColor: options?.theme?.background || "#1a1b26",
         }}
+        onTouchMove={(event) => {
+          event.preventDefault();
+        }}
         {...props}
       >
-        <div ref={terminalRef} className="h-full w-full" />
-        <textarea
-          className="absolute inset-0 h-full w-full resize-none opacity-0 sm:hidden"
-          autoCapitalize="none"
-          autoCorrect="off"
-          spellCheck="false"
-          autoComplete="off"
+        <div
           aria-label="Terminal input"
-          onInput={(e) => {
-            const target = e.target as HTMLTextAreaElement;
+          onInput={(event) => {
+            const target = event.target as HTMLTextAreaElement;
             const value = target.value;
 
             if (!value || !serviceRef.current) return;
             serviceRef.current.handleMobileInput(value);
             target.value = "";
           }}
-          onKeyDown={(e) => {
+          onKeyDown={(event) => {
             if (!serviceRef.current) return;
-            if (e.key === "Enter") {
+            if (event.key === "Enter") {
               serviceRef.current.handleEnter();
-              e.preventDefault();
-            } else if (e.key === "Backspace") {
+              event.preventDefault();
+            } else if (event.key === "Backspace") {
               serviceRef.current.handleBackspace();
-              e.preventDefault();
+              event.preventDefault();
             }
           }}
+          onTouchMove={(event) => {
+            event.preventDefault();
+          }}
+          ref={terminalRef}
+          className="h-full w-full"
         />
       </div>
     );

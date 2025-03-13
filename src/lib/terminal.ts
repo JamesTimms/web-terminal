@@ -234,7 +234,8 @@ export class TerminalService {
 
   public handleMobileInput(text: string) {
     for (const char of text) {
-      this.handleCharacter(char);
+      this.commandBuffer += char;
+      this.terminal.write(char);
     }
   }
 }
