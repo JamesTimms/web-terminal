@@ -4,114 +4,6 @@
   border-radius: var(--screen-radius);
 }
 
-.chromatic-filter {
-  filter: url("#chromatic-aberration-normal");
-}
-
-.chromatic-filter-subtle {
-  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='chromatic-aberration-subtle'><feOffset in='SourceGraphic' dx='-1' dy='0' result='red-offset'/><feColorMatrix in='red-offset' type='matrix' values='1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0' result='red-channel'/><feOffset in='SourceGraphic' dx='1' dy='0' result='blue-offset'/><feColorMatrix in='blue-offset' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0' result='blue-channel'/><feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0' result='green-channel'/><feBlend mode='screen' in='red-channel' in2='green-channel' result='red-green'/><feBlend mode='screen' in='red-green' in2='blue-channel' result='output'/></filter></svg>#chromatic-aberration-subtle");
-}
-
-.chromatic-filter-normal {
-  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='chromatic-aberration-normal'><feOffset in='SourceGraphic' dx='-2' dy='0' result='red-offset'/><feColorMatrix in='red-offset' type='matrix' values='1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0' result='red-channel'/><feOffset in='SourceGraphic' dx='2' dy='0' result='blue-offset'/><feColorMatrix in='blue-offset' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0' result='blue-channel'/><feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0' result='green-channel'/><feBlend mode='screen' in='red-channel' in2='green-channel' result='red-green'/><feBlend mode='screen' in='red-green' in2='blue-channel' result='output'/></filter></svg>#chromatic-aberration-normal");
-}
-
-.chromatic-filter-strong {
-  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='chromatic-aberration-strong'><feOffset in='SourceGraphic' dx='-3' dy='0' result='red-offset'/><feColorMatrix in='red-offset' type='matrix' values='1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0' result='red-channel'/><feOffset in='SourceGraphic' dx='3' dy='0' result='blue-offset'/><feColorMatrix in='blue-offset' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0' result='blue-channel'/><feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0' result='green-channel'/><feBlend mode='screen' in='red-channel' in2='green-channel' result='red-green'/><feBlend mode='screen' in='red-green' in2='blue-channel' result='output'/></filter></svg>#chromatic-aberration-strong");
-}
-
-.chromatic-filter-extreme {
-  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='chromatic-aberration-extreme'><feOffset in='SourceGraphic' dx='-5' dy='0' result='red-offset'/><feColorMatrix in='red-offset' type='matrix' values='1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0' result='red-channel'/><feOffset in='SourceGraphic' dx='5' dy='0' result='blue-offset'/><feColorMatrix in='blue-offset' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0' result='blue-channel'/><feColorMatrix in='SourceGraphic' type='matrix' values='0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0' result='green-channel'/><feBlend mode='screen' in='red-channel' in2='green-channel' result='red-green'/><feBlend mode='screen' in='red-green' in2='blue-channel' result='output'/></filter></svg>#chromatic-aberration-extreme");
-}
-
-.crt-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 8;
-  box-shadow:
-    0 0 10px rgba(10, 255, 10, 0.4),
-    inset 0 0 15px rgba(10, 255, 10, 0.4);
-  border-radius: var(--screen-radius);
-  opacity: 0.7;
-  mix-blend-mode: screen;
-}
-.crt-glow.green {
-  box-shadow:
-    0 0 10px rgba(10, 255, 10, 0.4),
-    inset 0 0 15px rgba(10, 255, 10, 0.4);
-}
-.crt-glow.amber {
-  box-shadow:
-    0 0 10px rgba(255, 176, 0, 0.4),
-    inset 0 0 15px rgba(255, 176, 0, 0.4);
-}
-.crt-glow.blue-white {
-  box-shadow:
-    0 0 10px rgba(180, 210, 255, 0.4),
-    inset 0 0 15px rgba(180, 210, 255, 0.4);
-}
-.crt-glow.white {
-  box-shadow:
-    0 0 10px rgba(220, 220, 255, 0.3),
-    inset 0 0 15px rgba(220, 220, 255, 0.3);
-}
-
-.crt-rgb {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 0, 0, 0.1),
-    rgba(0, 255, 0, 0.1),
-    rgba(0, 0, 255, 0.1)
-  );
-  background-size: 3px 1px; /* rgb pixel */
-  pointer-events: none;
-  z-index: 9;
-  opacity: 0.1;
-  /* mix-blend-mode: screen; */
-}
-
-.crt-scanlines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.15),
-    rgba(0, 0, 0, 0.15) 1px,
-    transparent 1px,
-    transparent 2px
-  );
-  pointer-events: none;
-  z-index: 10;
-}
-
-.crt-curvature {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    transparent 80%,
-    rgba(0, 0, 0, 0.8) 100%
-  );
-  pointer-events: none;
-  z-index: 11;
-  border-radius: var(--screen-radius);
-}
-
 @keyframes crt-flicker {
   0% {
     opacity: 0.97;
@@ -149,17 +41,9 @@
 }
 
 .crt-flicker {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 12;
-  mix-blend-mode: normal;
   animation: crt-flicker 3.7s infinite alternate;
-  background-color: transparent;
 }
+
 .crt-flicker.gradient {
   /* 90s games console style */
   background: linear-gradient(
