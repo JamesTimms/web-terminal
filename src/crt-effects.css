@@ -1,4 +1,4 @@
-.terminal-wrapper {
+.crt-wrapper {
   position: relative;
   overflow: hidden;
   border-radius: var(--screen-radius);
@@ -131,4 +131,181 @@
   mix-blend-mode: normal;
   animation: crt-flicker 0.7s infinite alternate;
   background-color: rgba(220, 230, 255, 0.025);
+}
+
+@keyframes crt-turn-on {
+  0% {
+    transform: scale(0.8, 0.1);
+    opacity: 0;
+  }
+  5% {
+    transform: scale(1, 0.03);
+    opacity: 0.6;
+  }
+  10% {
+    transform: scale(1, 0.08);
+    opacity: 0.8;
+  }
+  15% {
+    transform: scale(1, 0.2);
+    opacity: 0.9;
+  }
+  20% {
+    transform: scale(1, 0.6);
+    opacity: 0.9;
+  }
+  30% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  40% {
+    transform: scale(1, 1);
+    opacity: 0.9;
+  }
+  60% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(1, 1);
+    opacity: 0.95;
+  }
+  80% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+}
+
+@keyframes crt-white-flash {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.5;
+  }
+  40% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes crt-scan-distortion {
+  0% {
+    transform: scaleY(0.1);
+    opacity: 0.7;
+  }
+  20% {
+    transform: scaleY(0.5);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scaleY(1);
+    opacity: 0.3;
+  }
+  60% {
+    transform: scaleY(1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+.crt-turn-on {
+  animation: crt-turn-on 1.5s ease-in-out forwards;
+  transform-origin: center center;
+  position: relative;
+}
+
+.crt-turn-on::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 20;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  animation: crt-white-flash 1s ease-out forwards;
+}
+
+.crt-turn-on::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.3) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 21;
+  pointer-events: none;
+  animation: crt-scan-distortion 1.2s ease-out forwards;
+}
+
+@keyframes crt-turn-off {
+  0% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  10% {
+    transform: scale(1, 0.9);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(1, 0.4);
+    opacity: 0.8;
+  }
+  60% {
+    transform: scale(1, 0.1);
+    opacity: 0.6;
+  }
+  80% {
+    transform: scale(0.8, 0.05);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0.6, 0.01);
+    opacity: 0;
+  }
+}
+
+.crt-turn-off {
+  animation: crt-turn-off 0.6s ease-in-out forwards;
+  transform-origin: center center;
+}
+
+.crt-turn-off::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  z-index: 20;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  opacity: 0;
+  animation: crt-white-flash 0.2s ease-in forwards;
 }

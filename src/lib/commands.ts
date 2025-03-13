@@ -232,3 +232,15 @@ export const buildAchievementsCommand = (
     },
   };
 };
+
+export const createShutdownCommand = (onShutdown: () => void): Command => ({
+  name: "shutdown",
+  description: "Shutdown the terminal",
+  aliases: ["poweroff", "exit"],
+  execute: (_args, terminal) => {
+    terminal.writeLine("Shutting down...");
+
+    if (!onShutdown) return;
+    setTimeout(onShutdown, 300);
+  },
+});

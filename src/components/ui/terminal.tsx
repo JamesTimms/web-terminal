@@ -9,7 +9,23 @@ interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
   commands?: Command[];
 }
 
-export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
+const DesktopBackground = forwardRef<
+  HTMLDivElement,
+  HTMLAttributes<HTMLDivElement>
+>(({ children, className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn("h-full w-full bg-slate-800", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+});
+DesktopBackground.displayName = "Background";
+
+const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
   ({ options, commands, className, ...props }, ref) => {
     const terminalRef = useRef<HTMLDivElement>(null);
     const serviceRef = useRef<TerminalService | null>(null);
@@ -52,7 +68,10 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     return (
       <div
         ref={ref}
-        className={cn("relative overflow-hidden p-2 md:p-8", className)}
+        className={cn(
+          "relative h-full w-full overflow-hidden p-2 md:p-8",
+          className,
+        )}
         style={{
           backgroundColor: options?.theme?.background || "#1a1b26",
         }}
@@ -91,5 +110,7 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     );
   },
 );
-
 Terminal.displayName = "Terminal";
+
+export { DesktopBackground, Terminal };
+export default Terminal;

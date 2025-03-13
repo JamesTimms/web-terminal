@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState, useEffect, useImperativeHandle } from "react";
 import { cn } from "~/lib/utils";
 
 export type ChromaticStrength = "subtle" | "normal" | "strong" | "extreme";
@@ -9,6 +9,11 @@ export interface CrtScreenProps {
   className?: string;
   chromaticStrength?: ChromaticStrength;
   bloomType?: BloomType;
+  onPowerOff?: () => void;
+}
+
+export interface CrtScreenHandle {
+  powerOff: () => void;
 }
 
 const hideSvgFilter = {
@@ -151,26 +156,74 @@ const TextBloomFilter = ({ type = "subtle" }: { type?: BloomType }) => {
   );
 };
 
-const CrtScreen = forwardRef<HTMLDivElement, CrtScreenProps>(
+const CrtScreen = forwardRef<CrtScreenHandle, CrtScreenProps>(
   (
     {
       children,
       className,
       chromaticStrength = "subtle",
       bloomType = "subtle",
+      onPowerOff,
       ...props
     },
     ref,
   ) => {
+    const [powerState, setPowerState] = useState<
+      "off" | "on" | "turning-on" | "turning-off"
+    >("off");
+
+    useImperativeHandle(ref, () => ({
+      powerOff: () => {
+        setPowerState("turning-off");
+        setTimeout(() => {
+          setPowerState("off");
+          if (onPowerOff) onPowerOff();
+        }, 600); // Match animation duration
+      },
+    }));
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setPowerState("turning-on");
+        setTimeout(() => {
+          setPowerState("on");
+        }, 1500); // Match animation duration
+      }, 300);
+
+      return () => clearTimeout(timer);
+    }, []);
+
     const getFilterString = () => {
       const filters = [];
 
       filters.push(`url(#text-bloom-${bloomType})`);
-
       filters.push(`url(#chromatic-aberration-${chromaticStrength})`);
 
       return filters.join(" ");
     };
+
+    const getAnimationClass = () => {
+      switch (powerState) {
+        case "turning-on":
+          return "crt-turn-on";
+        case "turning-off":
+          return "crt-turn-off";
+        default:
+          return "";
+      }
+    };
+
+    if (powerState === "off") {
+      return (
+        <div
+          className={cn(
+            "rounded-md bg-slate-950",
+            "aspect-video h-full w-full",
+          )}
+          {...props}
+        ></div>
+      );
+    }
 
     return (
       <>
@@ -178,8 +231,12 @@ const CrtScreen = forwardRef<HTMLDivElement, CrtScreenProps>(
         <TextBloomFilter type={bloomType} />
 
         <div
-          ref={ref}
-          className={cn("terminal-wrapper", className)}
+          className={cn(
+            "bg-slate-950",
+            "h-full w-full sm:aspect-video",
+            getAnimationClass(),
+            className,
+          )}
           style={{
             filter: getFilterString(),
             position: "relative",
@@ -198,7 +255,6 @@ const CrtScreen = forwardRef<HTMLDivElement, CrtScreenProps>(
     );
   },
 );
-
 CrtScreen.displayName = "CrtScreen";
 
 export { CrtScreen, ChromaticAberrationFilter, TextBloomFilter };
