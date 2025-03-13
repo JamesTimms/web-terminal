@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
 
     return (
       <div className="min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12">
-        <div className="container px-1 sm:px-4 sm:py-4 md:px-4 md:py-4">
+        <div className="container mx-auto px-1 sm:px-4 sm:py-4 md:px-4 md:py-4">
           <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
             <CrtScreen ref={crtScreenRef}>
               <DesktopBackground className="h-full w-full bg-slate-800">
