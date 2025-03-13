@@ -187,12 +187,12 @@ const CrtScreen = forwardRef<HTMLDivElement, CrtScreenProps>(
           {...props}
         >
           {children}
-          <div className="crt-glow"></div>
-          <div className="crt-rgb"></div>
-          <div className="crt-vignette"></div>
-          <div className="crt-scanlines"></div>
-          <div className="crt-curvature"></div>
-          <div className="crt-flicker"></div>
+          <div className="crt-glow" />
+          <div className="crt-rgb" />
+          <div className="crt-vignette" />
+          <div className="crt-scanlines" />
+          <div className="crt-curvature" />
+          <div className="crt-flicker" />
         </div>
       </>
     );
