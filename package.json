@@ -6,7 +6,7 @@
   "scripts": {
     "generate-routes": "tsr generate",
     "watch-routes": "tsr watch",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build && tsc --noEmit",
     "lint": "eslint .",
     "preview": "vite preview"

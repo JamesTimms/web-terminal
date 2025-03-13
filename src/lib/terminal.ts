@@ -86,14 +86,13 @@ export class TerminalService {
           this.handleArrowDown();
           break;
         default:
-          if (!ev.ctrlKey && !ev.altKey) {
-            this.handleCharacter(key);
-          }
+          if (ev.ctrlKey || ev.altKey) return;
+          this.handleCharacter(key);
       }
     });
   }
 
-  private handleEnter() {
+  public handleEnter() {
     this.returnLine();
 
     if (this.commandBuffer.trim()) {
@@ -108,7 +107,7 @@ export class TerminalService {
     this.writePrompt();
   }
 
-  private processCommand(input: string) {
+  public processCommand(input: string) {
     const parts = input.trim().split(/\s+/);
     const commandName = parts[0].toLowerCase();
     const args = parts.slice(1);
@@ -125,7 +124,7 @@ export class TerminalService {
     }
   }
 
-  private handleBackspace() {
+  public handleBackspace() {
     if (this.commandBuffer.length > 0) {
       this.commandBuffer = this.commandBuffer.slice(0, -1);
       this.terminal.write("\b \b");
@@ -231,5 +230,11 @@ export class TerminalService {
 
   public fit() {
     this.fitAddon.fit();
+  }
+
+  public handleMobileInput(text: string) {
+    for (const char of text) {
+      this.handleCharacter(char);
+    }
   }
 }

@@ -51,13 +51,39 @@ export const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     return (
       <div
         ref={ref}
-        className={cn("overflow-hidden p-12", className)}
+        className={cn("relative overflow-hidden p-2 md:p-8", className)}
         style={{
           backgroundColor: options?.theme?.background || "#1a1b26",
         }}
         {...props}
       >
         <div ref={terminalRef} className="h-full w-full" />
+        <textarea
+          className="absolute inset-0 h-full w-full resize-none opacity-0 sm:hidden"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck="false"
+          autoComplete="off"
+          aria-label="Terminal input"
+          onInput={(e) => {
+            const target = e.target as HTMLTextAreaElement;
+            const value = target.value;
+
+            if (!value || !serviceRef.current) return;
+            serviceRef.current.handleMobileInput(value);
+            target.value = "";
+          }}
+          onKeyDown={(e) => {
+            if (!serviceRef.current) return;
+            if (e.key === "Enter") {
+              serviceRef.current.handleEnter();
+              e.preventDefault();
+            } else if (e.key === "Backspace") {
+              serviceRef.current.handleBackspace();
+              e.preventDefault();
+            }
+          }}
+        />
       </div>
     );
   },

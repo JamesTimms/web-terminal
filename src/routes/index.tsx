@@ -19,7 +19,7 @@ import {
 export const Route = createFileRoute("/")({
   component: () => (
     <div className="min-h-screen min-w-screen bg-slate-700 py-12">
-      <div className="container mx-auto max-w-[1024px] px-4 py-4">
+      <div className="container mx-auto max-h-[760px] max-w-[1016px] px-1 py-2 md:max-h-[736px] md:max-w-[992px] md:px-4 md:py-4">
         <div className="terminal-wrapper rounded-lg border-2 border-slate-500 shadow-lg">
           <CrtScreen>
             <Terminal
