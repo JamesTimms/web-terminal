@@ -107,6 +107,7 @@ export const buildCertificationsCommand = (
   return {
     name: "certifications",
     description: "Display my professional certifications",
+    aliases: ["certs"],
     execute: (_args, terminal) => {
       terminal.writeLine("\x1b[1;36m🏆 CERTIFICATIONS\x1b[0m");
 
@@ -290,7 +291,7 @@ export const buildAchievementsCommand = (
 export const createShutdownCommand = (onShutdown: () => void): Command => ({
   name: "shutdown",
   description: "Shutdown the terminal",
-  aliases: ["poweroff", "exit"],
+  aliases: ["exit"],
   execute: (_args, terminal) => {
     terminal.writeLine("Shutting down...");
 
