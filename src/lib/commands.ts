@@ -47,7 +47,7 @@ export const bootScreenCommand: Command = {
       "\x1b[1;32m╔════════════════════════════════════════╗\x1b[0m",
     );
     terminal.writeLine(
-      "\x1b[1;32m║  TechyTimms System Boot v1.0.0         ║\x1b[0m",
+      "\x1b[1;32m║  TechyTimms System Boot v0.1.0         ║\x1b[0m",
     );
     terminal.writeLine(
       "\x1b[1;32m╚════════════════════════════════════════╝\x1b[0m",
@@ -145,7 +145,7 @@ export const welcomeCommand: Command = {
   hidden: true,
   execute: (_args: string[], terminal: TerminalService) => {
     terminal.writeLine(
-      "\x1b[1;36mWelcome to TechyTimms Terminal v0.0.1\x1b[0m",
+      "\x1b[1;36mWelcome to TechyTimms Terminal v0.1.0\x1b[0m",
     );
     terminal.writeLine("\x1b[90m─────────────────────────────────────\x1b[0m");
     terminal.writeLine("🚀  Interactive terminal environment ready!");
@@ -173,14 +173,11 @@ export const sleep: Command = {
   ],
   hidden: true,
   execute: async (args: string[], terminal: TerminalService) => {
-    const delay = (ms: number) =>
-      new Promise((resolve) => setTimeout(resolve, ms));
-
     const ms = parseInt(args[0]);
-    if (!args.includes("--silent")) {
+    if (!args.includes("--silent") && !args.includes("-s")) {
       terminal.writeLine(`Sleeping for ${ms}ms...`);
     }
-    await delay(ms);
+    await new Promise((resolve) => setTimeout(resolve, ms));
   },
 };
 

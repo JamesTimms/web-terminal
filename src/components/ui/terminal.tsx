@@ -101,10 +101,10 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
             serviceRef.current.handleMobileInput(value);
             target.value = "";
           }}
-          onKeyDown={(event) => {
+          onKeyDown={async (event) => {
             if (!serviceRef.current) return;
             if (event.key === "Enter") {
-              serviceRef.current.handleEnter();
+              await serviceRef.current.handleEnter();
               event.preventDefault();
             } else if (event.key === "Backspace") {
               serviceRef.current.handleBackspace();

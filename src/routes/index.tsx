@@ -91,7 +91,7 @@ export const Route = createFileRoute("/")({
                   bootCommands={[
                     "boot",
                     "sleep 500 -s",
-                    "clear",
+                    "clear -s",
                     "sleep 250 -s",
                     "welcome",
                   ]}

@@ -27,7 +27,7 @@ export interface Command {
   arguments?: CommandArgument[];
   examples?: string[];
   hidden?: boolean;
-  execute: (args: string[], terminal: TerminalService) => void;
+  execute: (args: string[], terminal: TerminalService) => void | Promise<void>;
 }
 
 export class TerminalService {
@@ -145,7 +145,7 @@ export class TerminalService {
     });
   }
 
-  public handleEnter() {
+  public async handleEnter() {
     this.returnLine();
 
     if (this.commandBuffer.trim()) {
@@ -153,15 +153,19 @@ export class TerminalService {
       this.historyIndex = -1;
       this.currentInputBuffer = "";
 
-      this.processCommand(this.commandBuffer);
-    }
+      const input = this.commandBuffer;
+      this.commandBuffer = "";
+      this.cursorPosition = 0;
 
-    this.commandBuffer = "";
-    this.cursorPosition = 0;
-    this.writePrompt();
+      await this.processCommand(input);
+    } else {
+      this.commandBuffer = "";
+      this.cursorPosition = 0;
+      this.writePrompt();
+    }
   }
 
-  public processCommand(input: string) {
+  public async processCommand(input: string, silent: boolean = false) {
     const parts = input.trim().split(/\s+/);
     const commandName = parts[0].toLowerCase();
     const args = parts.slice(1);
@@ -172,10 +176,23 @@ export class TerminalService {
     if (!command) {
       this.writeLine(`Command not found: ${commandName}`);
       this.writeLine(`Type 'help' to see available commands`);
+      this.writePrompt();
       return;
     }
 
-    command.execute(args, this);
+    try {
+      const result = command.execute(args, this);
+
+      if (result instanceof Promise) {
+        await result;
+      }
+    } catch (error) {
+      this.writeLine(`\x1b[31mError executing command: ${error}\x1b[0m`);
+    }
+
+    if (!silent) {
+      this.writePrompt();
+    }
   }
 
   public handleBackspace() {
@@ -303,17 +320,18 @@ export class TerminalService {
     });
 
     if (!this.hasInitalised) {
-      this.runInitializationCommands();
+      this.runBootCommands();
       this.hasInitalised = true;
     }
 
     this.writePrompt();
   }
 
-  private runInitializationCommands() {
+  private async runBootCommands() {
     for (const commandName of this.bootCommands) {
-      this.processCommand(commandName);
+      await this.processCommand(commandName, true);
     }
+    this.writePrompt();
   }
 
   public dispose() {
