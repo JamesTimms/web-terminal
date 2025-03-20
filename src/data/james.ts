@@ -21,6 +21,7 @@ export const skills: (Skill | "break")[] = [
   { name: "Git • GitHub Action • GitLab", level: 4 },
   { name: "Unit Testing • Pytest • Vitest", level: 4 },
   { name: "NextJS", level: 3 },
+  { name: "AI & LLM Products • RAG", level: 3 },
   "break",
 
   // Cloud & Infrastructure
@@ -28,8 +29,10 @@ export const skills: (Skill | "break")[] = [
   { name: "Terraform • IaC", level: 4 },
   { name: "Docker • Kubernetes • Helm", level: 4 },
   { name: "Vercel • CloudFlare", level: 4 },
+  { name: "Prometheus • Grafana", level: 4 },
   { name: "Databases • PostgreSQL", level: 3 },
-  { name: "AI & LLM Products • RAG", level: 3 },
+  { name: "ArgoCD • GitOps", level: 3 },
+  { name: "Networking • VPNs • DNS", level: 3 },
   "break",
 
   // Operations
@@ -43,6 +46,8 @@ export const skills: (Skill | "break")[] = [
   // Product & Management
   { name: "Product-led Growth • PostHog", level: 4 },
   { name: "Consumer Products", level: 4 },
+  { name: "SaaS Products", level: 4 },
+  { name: "Real Estate • PropTech", level: 4 },
   { name: "Agile • Project Delivery", level: 3 },
   { name: "Mentoring • Leadership", level: 3 },
 ];
@@ -156,9 +161,11 @@ export const workExperience: WorkExperience[] = [
       "Admin of hypervisors (ESXi), vSphere, Linux & Windows systems and more.",
       "Worked with resilient multi-site systems with vastly complex networks.",
       "Worked with Docker & k8s and part-designed telco-ready solutions.",
+      "Deployed self-hosted Gitlab, Ansible AWX, Rundeck and customer tools.",
       "Involved in IaC, DevOps practices, Lean Principles, CI/CD and more.",
       "Created automation tools to deliver 5G network functions.",
       "Defined policies, organised events and reformed process.",
+      "Designed architectural solutions with multiple vendors for our core network.",
     ],
   },
   {
@@ -170,6 +177,9 @@ export const workExperience: WorkExperience[] = [
       "Won first place in a company wide Graduate Event leading to the BT Bus project, a Graduate Recruitment campaign with sponsorship from Directors.",
       "Built a simple Erlang web framework for mobile core network web apps.",
       "Authored the SIM Technology cryptographic key exchange process.",
+      "Advocated and lead in an SDN Automation proof of concept.",
+      "Created a life-cycle management web app called RAN-Aware for the Radio Area Network team using Laravel.",
+      "Built a simple web crawler in Electron & JavaScript for data collection.",
     ],
   },
   {
@@ -180,6 +190,8 @@ export const workExperience: WorkExperience[] = [
     description: [
       "Founded a VPN service provider with over 500 customer.",
       "Built website using PHP, Laravel and Vue.js hosted on Digital Ocean.",
+      "Built VPN services using Softether based technology.",
+      "Taken on various contract work.",
     ],
   },
   {
@@ -187,7 +199,11 @@ export const workExperience: WorkExperience[] = [
     role: "Junior Programmer",
     period: "June 2013 - Aug 2014",
     location: "Aberystwyth, UK",
-    description: [],
+    description: [
+      "Rebuilt a gym cycling game with Unity3D and C#. Went from poorly maintained code to a shipped game that is in hundreds of gyms around the world.",
+      "Commissioned to build a demo ski game.",
+      "Managed Git repositories for the company's source code.",
+    ],
   },
 ];
 
