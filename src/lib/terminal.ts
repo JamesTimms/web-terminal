@@ -6,11 +6,25 @@ import {
   ITerminalInitOnlyOptions,
 } from "@xterm/xterm";
 
+export interface CommandOption {
+  name: string; // e.g. "--summary"
+  alias?: string; // e.g. "-s"
+  description: string;
+}
+
+export interface CommandArgument {
+  name: string; // e.g. "category"
+  description: string;
+  optional?: boolean;
+}
+
 export interface Command {
   name: string;
   description: string;
   aliases?: string[];
-  options?: string[];
+  options?: CommandOption[];
+  arguments?: CommandArgument[];
+  examples?: string[];
   execute: (args: string[], terminal: TerminalService) => void;
 }
 
