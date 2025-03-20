@@ -85,6 +85,12 @@ export class TerminalService {
           ev.preventDefault();
           this.handleArrowDown();
           break;
+        case "Home":
+          ev.preventDefault();
+          break;
+        case "End":
+          ev.preventDefault();
+          break;
         default:
           if (ev.ctrlKey || ev.altKey) return;
           this.handleCharacter(key);
