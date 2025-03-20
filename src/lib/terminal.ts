@@ -18,6 +18,7 @@ export class TerminalService {
   private terminal: XTerm;
   private fitAddon: FitAddon;
   private commandBuffer = "";
+  private cursorPosition = 0;
   private hasInitalised = false;
   public commands: Map<string, Command> = new Map();
   private aliases: Map<string, string> = new Map();
@@ -70,6 +71,26 @@ export class TerminalService {
     this.terminal.onKey(({ key, domEvent }) => {
       const ev = domEvent as KeyboardEvent;
 
+      if (
+        [
+          "ArrowUp",
+          "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
+          "Home",
+          "End",
+          " ",
+        ].includes(ev.key)
+      ) {
+        ev.preventDefault();
+      }
+
+      const isModifer = ev.shiftKey || ev.ctrlKey || ev.altKey || ev.metaKey;
+      if (isModifer) {
+        // Prevent default to avoid double input
+        ev.preventDefault();
+      }
+
       switch (ev.key) {
         case "Enter":
           this.handleEnter();
@@ -77,22 +98,28 @@ export class TerminalService {
         case "Backspace":
           this.handleBackspace();
           break;
+        case "Delete":
+          this.handleDelete();
+          break;
         case "ArrowUp":
-          ev.preventDefault();
           this.handleArrowUp();
           break;
         case "ArrowDown":
-          ev.preventDefault();
           this.handleArrowDown();
           break;
+        case "ArrowLeft":
+          this.handleArrowLeft();
+          break;
+        case "ArrowRight":
+          this.handleArrowRight();
+          break;
         case "Home":
-          ev.preventDefault();
+          this.handleHome();
           break;
         case "End":
-          ev.preventDefault();
+          this.handleEnd();
           break;
         default:
-          if (ev.ctrlKey || ev.altKey) return;
           this.handleCharacter(key);
       }
     });
@@ -110,6 +137,7 @@ export class TerminalService {
     }
 
     this.commandBuffer = "";
+    this.cursorPosition = 0;
     this.writePrompt();
   }
 
@@ -118,28 +146,87 @@ export class TerminalService {
     const commandName = parts[0].toLowerCase();
     const args = parts.slice(1);
 
-    // Check if the command is an alias and get the actual command name
     const actualCommandName = this.aliases.get(commandName) || commandName;
     const command = this.commands.get(actualCommandName);
 
-    if (command) {
-      command.execute(args, this);
-    } else {
+    if (!command) {
       this.writeLine(`Command not found: ${commandName}`);
       this.writeLine(`Type 'help' to see available commands`);
+      return;
     }
+
+    command.execute(args, this);
   }
 
   public handleBackspace() {
-    if (this.commandBuffer.length > 0) {
-      this.commandBuffer = this.commandBuffer.slice(0, -1);
-      this.terminal.write("\b \b");
-    }
+    if (this.cursorPosition <= 0) return;
+
+    const beforeCursor = this.commandBuffer.substring(
+      0,
+      this.cursorPosition - 1,
+    );
+    const afterCursor = this.commandBuffer.substring(this.cursorPosition);
+    this.commandBuffer = beforeCursor + afterCursor;
+
+    this.terminal.write("\b");
+    this.cursorPosition--;
+
+    this.terminal.write(afterCursor + " ");
+
+    this.terminal.write("\b".repeat(afterCursor.length + 1));
+  }
+
+  public handleDelete() {
+    if (this.cursorPosition >= this.commandBuffer.length) return;
+
+    const beforeCursor = this.commandBuffer.substring(0, this.cursorPosition);
+    const afterCursor = this.commandBuffer.substring(this.cursorPosition + 1);
+    this.commandBuffer = beforeCursor + afterCursor;
+
+    this.terminal.write(afterCursor + " ");
+
+    this.terminal.write("\b".repeat(afterCursor.length + 1));
   }
 
   private handleCharacter(char: string) {
-    this.commandBuffer += char;
+    const beforeCursor = this.commandBuffer.substring(0, this.cursorPosition);
+    const afterCursor = this.commandBuffer.substring(this.cursorPosition);
+    this.commandBuffer = beforeCursor + char + afterCursor;
+
     this.terminal.write(char);
+    this.cursorPosition++;
+
+    if (afterCursor.length <= 0) return;
+
+    this.terminal.write(afterCursor);
+    this.terminal.write("\b".repeat(afterCursor.length));
+  }
+
+  private handleArrowLeft() {
+    if (this.cursorPosition <= 0) return;
+
+    this.cursorPosition--;
+    this.terminal.write("\b");
+  }
+
+  private handleArrowRight() {
+    if (this.cursorPosition >= this.commandBuffer.length) return;
+
+    this.terminal.write(this.commandBuffer[this.cursorPosition]);
+    this.cursorPosition++;
+  }
+
+  private handleHome() {
+    this.terminal.write("\b".repeat(this.cursorPosition));
+    this.cursorPosition = 0;
+  }
+
+  private handleEnd() {
+    if (this.cursorPosition >= this.commandBuffer.length) return;
+
+    const remainingText = this.commandBuffer.substring(this.cursorPosition);
+    this.terminal.write(remainingText);
+    this.cursorPosition = this.commandBuffer.length;
   }
 
   private handleArrowUp() {
@@ -147,34 +234,36 @@ export class TerminalService {
       this.currentInputBuffer = this.commandBuffer;
     }
 
-    if (this.historyIndex < this.commandHistory.length - 1) {
-      this.historyIndex++;
-      this.replaceCommandBuffer(
-        this.commandHistory[this.commandHistory.length - 1 - this.historyIndex],
-      );
-    }
+    if (this.historyIndex >= this.commandHistory.length - 1) return;
+
+    this.historyIndex++;
+    this.replaceCommandBuffer(
+      this.commandHistory[this.commandHistory.length - 1 - this.historyIndex],
+    );
   }
 
   private handleArrowDown() {
-    if (this.historyIndex > 0) {
-      this.historyIndex--;
-      this.replaceCommandBuffer(
-        this.commandHistory[this.commandHistory.length - 1 - this.historyIndex],
-      );
-    } else if (this.historyIndex === 0) {
+    if (this.historyIndex < 0) return;
+    if (this.historyIndex === 0) {
       this.historyIndex = -1;
       this.replaceCommandBuffer(this.currentInputBuffer);
+      return;
     }
+
+    this.historyIndex--;
+    this.replaceCommandBuffer(
+      this.commandHistory[this.commandHistory.length - 1 - this.historyIndex],
+    );
   }
 
   private replaceCommandBuffer(newCommand: string) {
-    const charsToDelete = this.commandBuffer.length;
-    for (let i = 0; i < charsToDelete; i++) {
-      this.terminal.write("\b \b");
-    }
+    this.terminal.write("\b".repeat(this.cursorPosition));
+    this.terminal.write(" ".repeat(this.commandBuffer.length));
+    this.terminal.write("\b".repeat(this.commandBuffer.length));
 
     this.commandBuffer = newCommand;
     this.terminal.write(newCommand);
+    this.cursorPosition = newCommand.length;
   }
 
   private writePrompt() {
