@@ -1,6 +1,10 @@
 import { Command } from "./terminal";
 
-export const default_commands: Command[] = [
+export interface ResponsiveOptions {
+  isMobile: boolean;
+}
+
+export const default_commands = (options: ResponsiveOptions): Command[] => [
   {
     name: "help",
     description: "Display available commands",
@@ -11,6 +15,19 @@ export const default_commands: Command[] = [
       const sortedCommands = Array.from(terminal.commands.values()).sort(
         (left, right) => left.name.localeCompare(right.name),
       );
+
+      if (options.isMobile) {
+        for (const cmd of sortedCommands) {
+          terminal.writeLine(`\x1b[1;33m${cmd.name}\x1b[0m`);
+          terminal.writeLine(`  ${cmd.description}`);
+          if (cmd.aliases) {
+            terminal.writeLine(`  aliases: ${cmd.aliases.join(", ")}`);
+          }
+          terminal.writeLine("");
+        }
+        terminal.writeLine("");
+        return;
+      }
 
       const longestNameWithAliases = sortedCommands.reduce((max, cmd) => {
         const aliasesStr = cmd.aliases ? `, ${cmd.aliases.join(", ")}` : "";
@@ -28,7 +45,6 @@ export const default_commands: Command[] = [
           `  ${commandWithAliases}${padding}${cmd.description}`,
         );
       }
-
       terminal.writeLine("");
     },
   },
@@ -86,15 +102,19 @@ export interface Achievement {
 
 export const buildCertificationsCommand = (
   certifications: Certification[],
+  options: ResponsiveOptions,
 ): Command => {
   return {
     name: "certifications",
     description: "Display my professional certifications",
     execute: (_args, terminal) => {
       terminal.writeLine("\x1b[1;36m🏆 CERTIFICATIONS\x1b[0m");
-      terminal.writeLine(
-        "\x1b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m",
-      );
+
+      const separator = options.isMobile
+        ? "\x1b[90m─────────────────────\x1b[0m"
+        : "\x1b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m";
+
+      terminal.writeLine(separator);
       terminal.writeLine("");
 
       for (const cert of certifications) {
@@ -108,6 +128,7 @@ export const buildCertificationsCommand = (
 
 export const buildWorkExperienceCommand = (
   experiences: WorkExperience[],
+  options: ResponsiveOptions,
 ): Command => {
   return {
     name: "experience",
@@ -118,9 +139,12 @@ export const buildWorkExperienceCommand = (
       const showSummary = args.includes("--summary") || args.includes("-s");
 
       terminal.writeLine("\x1b[1;36m🚀 WORK EXPERIENCE\x1b[0m");
-      terminal.writeLine(
-        "\x1b[90m─────────────────────────────────────\x1b[0m",
-      );
+
+      const separator = options.isMobile
+        ? "\x1b[90m─────────────────────\x1b[0m"
+        : "\x1b[90m─────────────────────────────────────\x1b[0m";
+
+      terminal.writeLine(separator);
       terminal.writeLine("");
 
       for (const exp of experiences) {
@@ -131,10 +155,17 @@ export const buildWorkExperienceCommand = (
           continue;
         }
 
-        terminal.writeLine(
-          `\x1b[1;33m${exp.company}\x1b[0m - \x1b[1m${exp.role}\x1b[0m`,
-        );
-        terminal.writeLine(`\x1b[37m${exp.period} | ${exp.location}\x1b[0m`);
+        if (options.isMobile) {
+          terminal.writeLine(`\x1b[1;33m${exp.company}\x1b[0m`);
+          terminal.writeLine(`\x1b[1m${exp.role}\x1b[0m`);
+          terminal.writeLine(`\x1b[37m${exp.period}\x1b[0m`);
+          terminal.writeLine(`\x1b[37m${exp.location}\x1b[0m`);
+        } else {
+          terminal.writeLine(
+            `\x1b[1;33m${exp.company}\x1b[0m - \x1b[1m${exp.role}\x1b[0m`,
+          );
+          terminal.writeLine(`\x1b[37m${exp.period} | ${exp.location}\x1b[0m`);
+        }
 
         terminal.writeLine("");
 
@@ -143,16 +174,17 @@ export const buildWorkExperienceCommand = (
         }
         terminal.writeLine("");
 
-        terminal.writeLine(
-          "\x1b[90m─────────────────────────────────────\x1b[0m",
-        );
+        terminal.writeLine(separator);
         terminal.writeLine("");
       }
     },
   };
 };
 
-export const buildSkillCommand = (skills: (Skill | "break")[]): Command => {
+export const buildSkillCommand = (
+  skills: (Skill | "break")[],
+  options: ResponsiveOptions,
+): Command => {
   return {
     name: "skills",
     description: "Display my skills with visual ratings",
@@ -164,6 +196,24 @@ export const buildSkillCommand = (skills: (Skill | "break")[]): Command => {
         { name: "Advanced", symbol: "⭐ ⭐ ⭐ ⭐" },
         { name: "Expert", symbol: "⭐ ⭐ ⭐ ⭐ ⭐" },
       ];
+
+      if (options.isMobile) {
+        terminal.writeLine("\x1b[1;36m💡 SKILLS\x1b[0m");
+        terminal.writeLine("\x1b[90m─────────────────────\x1b[0m");
+        terminal.writeLine("");
+
+        for (const skill of skills) {
+          if (skill === "break") {
+            terminal.writeLine("");
+            continue;
+          }
+
+          terminal.writeLine(`\x1b[1m${skill.name}\x1b[0m`);
+          terminal.writeLine(`${levels[skill.level].symbol}`);
+          terminal.writeLine("");
+        }
+        return;
+      }
 
       const longestName = skills.reduce(
         (max, skill) =>
@@ -210,6 +260,7 @@ export const buildSkillCommand = (skills: (Skill | "break")[]): Command => {
 
 export const buildAchievementsCommand = (
   achievements: Achievement[],
+  options: ResponsiveOptions,
 ): Command => {
   return {
     name: "achievements",
@@ -217,9 +268,12 @@ export const buildAchievementsCommand = (
     aliases: ["ach"],
     execute: (_args, terminal) => {
       terminal.writeLine("\x1b[1;35m🌟 ACHIEVEMENTS & HOBBIES\x1b[0m");
-      terminal.writeLine(
-        "\x1b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m",
-      );
+
+      const separator = options.isMobile
+        ? "\x1b[90m─────────────────────\x1b[0m"
+        : "\x1b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m";
+
+      terminal.writeLine(separator);
       terminal.writeLine("");
 
       for (const achievement of achievements) {

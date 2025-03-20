@@ -29,7 +29,7 @@ const hideSvgFilter = {
 };
 
 const ChromaticAberrationFilter = ({
-  strength = "normal",
+  strength = "subtle",
 }: {
   strength?: ChromaticStrength;
 }) => {

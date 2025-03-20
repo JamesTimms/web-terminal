@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo, useCallback } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { Terminal, DesktopBackground } from "~/components/ui/terminal";
@@ -16,16 +16,65 @@ import {
   buildCertificationsCommand,
   buildWorkExperienceCommand,
   createShutdownCommand,
+  ResponsiveOptions,
 } from "~/lib/commands";
+import { useIsDesktop } from "~/hooks/useScreenSize";
 
 export const Route = createFileRoute("/")({
   component: () => {
     const crtScreenRef = useRef<CrtScreenHandle>(null);
 
-    const handleShutdown = () => {
+    const isDesktop = useIsDesktop();
+
+    const terminalDimensions = useMemo(
+      () => ({
+        cols: isDesktop ? 120 : 60,
+        rows: 36,
+      }),
+      [isDesktop],
+    );
+
+    const handleShutdown = useCallback(() => {
       if (!crtScreenRef.current) return;
       crtScreenRef.current.powerOff();
-    };
+    }, []);
+
+    const responsiveOptions = useMemo<ResponsiveOptions>(
+      () => ({
+        isMobile: !isDesktop,
+      }),
+      [isDesktop],
+    );
+
+    const commands = useMemo(
+      () => [
+        ...default_commands(responsiveOptions),
+        buildSkillCommand(skills, responsiveOptions),
+        buildWorkExperienceCommand(workExperience, responsiveOptions),
+        buildCertificationsCommand(certifications, responsiveOptions),
+        buildAchievementsCommand(achievements, responsiveOptions),
+        createShutdownCommand(handleShutdown),
+      ],
+      [responsiveOptions, handleShutdown],
+    );
+
+    const terminalOptions = useMemo(
+      () => ({
+        theme: {
+          background: "#1a1b26",
+          foreground: "#a9b1d6",
+          cursor: "#c0caf5",
+        },
+        fontSize: isDesktop ? 14 : 12,
+        cursorBlink: true,
+        fontFamily: '"VT323", "Press Start 2P", monospace',
+        lineHeight: 1.2,
+        letterSpacing: isDesktop ? 1.5 : 1,
+        cols: terminalDimensions.cols,
+        rows: terminalDimensions.rows,
+      }),
+      [isDesktop, terminalDimensions.cols, terminalDimensions.rows],
+    );
 
     return (
       <div className="min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12">
@@ -35,28 +84,8 @@ export const Route = createFileRoute("/")({
               <DesktopBackground className="h-full w-full bg-slate-800">
                 <Terminal
                   className="rounded-lg border border-slate-600"
-                  options={{
-                    theme: {
-                      background: "#1a1b26",
-                      foreground: "#a9b1d6",
-                      cursor: "#c0caf5",
-                    },
-                    fontSize: 14,
-                    cursorBlink: true,
-                    fontFamily: '"VT323", "Press Start 2P", monospace',
-                    lineHeight: 1.2,
-                    letterSpacing: 1.5,
-                    cols: 120,
-                    rows: 30,
-                  }}
-                  commands={[
-                    ...default_commands,
-                    buildSkillCommand(skills),
-                    buildWorkExperienceCommand(workExperience),
-                    buildCertificationsCommand(certifications),
-                    buildAchievementsCommand(achievements),
-                    createShutdownCommand(handleShutdown),
-                  ]}
+                  options={terminalOptions}
+                  commands={commands}
                 />
               </DesktopBackground>
             </CrtScreen>
