@@ -32,7 +32,162 @@ export interface Achievement {
   icon?: string;
 }
 
+export const bootScreenCommand: Command = {
+  name: "boot",
+  description: "Simulates a system boot sequence",
+  hidden: true,
+  execute: async (_args: string[], terminal: TerminalService) => {
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    terminal.clear();
+
+    // Boot sequence header
+    terminal.writeLine(
+      "\x1b[1;32m╔════════════════════════════════════════╗\x1b[0m",
+    );
+    terminal.writeLine(
+      "\x1b[1;32m║  TechyTimms System Boot v1.0.0         ║\x1b[0m",
+    );
+    terminal.writeLine(
+      "\x1b[1;32m╚════════════════════════════════════════╝\x1b[0m",
+    );
+    terminal.returnLine();
+
+    await delay(500);
+
+    // Initial BIOS messages
+    terminal.writeLine("\x1b[33mBIOS Initialization...\x1b[0m");
+    await delay(600);
+    terminal.writeLine("Checking system memory...");
+    await delay(800);
+
+    // Memory check animation with progress
+    terminal.write("Memory test: [");
+    for (let i = 0; i < 20; i++) {
+      terminal.write("\x1b[36m█\x1b[0m");
+      await delay(50);
+    }
+    terminal.writeLine("] \x1b[32mOK\x1b[0m");
+    await delay(300);
+
+    // Hardware detection
+    terminal.writeLine("\nDetecting hardware components...");
+    await delay(300);
+    terminal.writeLine("\x1b[90m→ CPU: TechyCore i7 @ 3.8GHz\x1b[0m");
+    await delay(200);
+    terminal.writeLine("\x1b[90m→ RAM: 16GB DDR4-3200\x1b[0m");
+    await delay(200);
+    terminal.writeLine("\x1b[90m→ GPU: WebGL Renderer\x1b[0m");
+    await delay(200);
+    terminal.writeLine("\x1b[90m→ Storage: Virtual SSD 512GB\x1b[0m");
+    await delay(400);
+
+    // Filesystem check
+    terminal.writeLine("\nMounting filesystems...");
+    await delay(400);
+    terminal.write("Checking filesystem integrity: ");
+    await delay(500);
+    terminal.writeLine("\x1b[32mComplete\x1b[0m");
+    await delay(300);
+
+    // Network initialization
+    terminal.writeLine("\nInitializing network services...");
+    await delay(300);
+    terminal.write("Establishing connection: ");
+
+    // Animated connecting dots
+    for (let i = 0; i < 5; i++) {
+      terminal.write(".");
+      await delay(200);
+    }
+    terminal.writeLine(" \x1b[32mConnected\x1b[0m");
+    await delay(250);
+
+    // System services startup
+    terminal.writeLine("\nStarting system services:");
+    const services = [
+      "core-utils",
+      "file-system",
+      "command-handler",
+      "terminal-service",
+      "user-interface",
+    ];
+
+    for (const service of services) {
+      terminal.write(`Starting ${service}... `);
+      await delay(400);
+      terminal.writeLine("\x1b[32m[OK]\x1b[0m");
+    }
+
+    await delay(300);
+
+    // Boot complete
+    terminal.returnLine();
+    terminal.writeLine(
+      "\x1b[1;32m╔════════════════════════════════════════╗\x1b[0m",
+    );
+    terminal.writeLine(
+      "\x1b[1;32m║  System boot complete!                 ║\x1b[0m",
+    );
+    terminal.writeLine(
+      "\x1b[1;32m╚════════════════════════════════════════╝\x1b[0m",
+    );
+    terminal.returnLine();
+
+    await delay(250);
+  },
+};
+
+export const welcomeCommand: Command = {
+  name: "welcome",
+  description: "Displays the welcome message",
+  hidden: true,
+  execute: (_args: string[], terminal: TerminalService) => {
+    terminal.writeLine(
+      "\x1b[1;36mWelcome to TechyTimms Terminal v0.0.1\x1b[0m",
+    );
+    terminal.writeLine("\x1b[90m─────────────────────────────────────\x1b[0m");
+    terminal.writeLine("🚀  Interactive terminal environment ready!");
+    terminal.writeLine('📝  Type "help" for available commands');
+    terminal.writeLine("🔍  Try typing some commands to get started");
+    terminal.returnLine();
+  },
+};
+
+export const sleep: Command = {
+  name: "sleep",
+  description: "Sleep for a given number of milliseconds",
+  options: [
+    {
+      name: "--silent",
+      alias: "-s",
+      description: "Do not print a message",
+    },
+  ],
+  arguments: [
+    {
+      name: "ms",
+      description: "The number of milliseconds to sleep",
+    },
+  ],
+  hidden: true,
+  execute: async (args: string[], terminal: TerminalService) => {
+    const delay = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    const ms = parseInt(args[0]);
+    if (!args.includes("--silent")) {
+      terminal.writeLine(`Sleeping for ${ms}ms...`);
+    }
+    await delay(ms);
+  },
+};
+
 export const default_commands = (options: ResponsiveOptions): Command[] => [
+  bootScreenCommand,
+  withHelpOption(welcomeCommand),
+  withHelpOption(sleep),
   {
     name: "help",
     description: "Display available commands",
@@ -40,8 +195,12 @@ export const default_commands = (options: ResponsiveOptions): Command[] => [
       terminal.writeLine("Available commands:");
       terminal.writeLine("");
 
-      const sortedCommands = Array.from(terminal.commands.values()).sort(
-        (left, right) => left.name.localeCompare(right.name),
+      const filteredCommands = Array.from(terminal.commands.values()).filter(
+        (command) => !command.hidden,
+      );
+
+      const sortedCommands = filteredCommands.sort((left, right) =>
+        left.name.localeCompare(right.name),
       );
 
       if (options.isMobile) {

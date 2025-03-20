@@ -3,10 +3,12 @@ import { ITerminalOptions, ITerminalInitOnlyOptions } from "@xterm/xterm";
 
 import { cn } from "~/lib/utils";
 import { Command, TerminalService } from "~/lib/terminal";
+import { welcomeCommand } from "~/lib/commands";
 
 interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
   options?: ITerminalOptions & ITerminalInitOnlyOptions;
   commands?: Command[];
+  bootCommands?: string[];
 }
 
 const DesktopBackground = forwardRef<
@@ -26,14 +28,23 @@ const DesktopBackground = forwardRef<
 DesktopBackground.displayName = "Background";
 
 const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
-  ({ options, commands, className, ...props }, ref) => {
+  (
+    {
+      options,
+      commands,
+      bootCommands = [welcomeCommand.name],
+      className,
+      ...props
+    },
+    ref,
+  ) => {
     const terminalRef = useRef<HTMLDivElement>(null);
     const serviceRef = useRef<TerminalService | null>(null);
 
     useEffect(() => {
       if (serviceRef.current || !terminalRef.current) return;
 
-      const service = new TerminalService(options, commands);
+      const service = new TerminalService(options, commands, bootCommands);
       serviceRef.current = service;
 
       service.mount(terminalRef.current);

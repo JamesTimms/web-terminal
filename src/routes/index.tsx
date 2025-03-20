@@ -88,6 +88,13 @@ export const Route = createFileRoute("/")({
                   className="rounded-lg border border-slate-600"
                   options={terminalOptions}
                   commands={commands}
+                  bootCommands={[
+                    "boot",
+                    "sleep 500 -s",
+                    "clear",
+                    "sleep 250 -s",
+                    "welcome",
+                  ]}
                 />
               </DesktopBackground>
             </CrtScreen>

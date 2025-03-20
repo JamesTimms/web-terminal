@@ -26,6 +26,7 @@ export interface Command {
   options?: CommandOption[];
   arguments?: CommandArgument[];
   examples?: string[];
+  hidden?: boolean;
   execute: (args: string[], terminal: TerminalService) => void;
 }
 
@@ -40,10 +41,12 @@ export class TerminalService {
   private commandHistory: string[] = [];
   private historyIndex: number = -1;
   private currentInputBuffer: string = "";
+  private bootCommands: string[] = [];
 
   constructor(
     options: ITerminalOptions & ITerminalInitOnlyOptions = {},
     commands: Command[] = [],
+    bootCommands: string[] = ["welcome"],
   ) {
     this.terminal = new XTerm(options);
 
@@ -51,6 +54,7 @@ export class TerminalService {
     this.terminal.loadAddon(this.fitAddon);
     this.terminal.loadAddon(new WebLinksAddon());
 
+    this.bootCommands = bootCommands;
     this.setupKeyHandlers();
     this.registerDefaultCommands(commands);
   }
@@ -299,28 +303,21 @@ export class TerminalService {
     });
 
     if (!this.hasInitalised) {
-      this.writeWelcomeMessage();
+      this.runInitializationCommands();
       this.hasInitalised = true;
     }
 
     this.writePrompt();
   }
 
-  public dispose() {
-    this.terminal.dispose();
+  private runInitializationCommands() {
+    for (const commandName of this.bootCommands) {
+      this.processCommand(commandName);
+    }
   }
 
-  private writeWelcomeMessage() {
-    this.terminal.writeln(
-      "\x1b[1;36mWelcome to TechyTimms Terminal v0.0.1\x1b[0m",
-    );
-    this.terminal.writeln(
-      "\x1b[90m─────────────────────────────────────\x1b[0m",
-    );
-    this.terminal.writeln("🚀  Interactive terminal environment ready!");
-    this.terminal.writeln('📝  Type "help" for available commands');
-    this.terminal.writeln("🔍  Try typing some commands to get started");
-    this.returnLine();
+  public dispose() {
+    this.terminal.dispose();
   }
 
   public writeLine(text: string = "") {
