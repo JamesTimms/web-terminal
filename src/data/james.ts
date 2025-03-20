@@ -1,9 +1,18 @@
 import {
   Skill,
-  WorkExperience,
-  Certification,
+  AboutInfo,
   Achievement,
+  Certification,
+  WorkExperience,
 } from "~/lib/commands";
+
+export const aboutInfo: AboutInfo = {
+  paragraphs: [
+    "I'm a founder, hacker, gamer, occasional apple tree climber, and newly minted dog dad. I love solving problems and drinking bubble tea🧋",
+    "Founder of RaavaVPN, Mappa and other startups. Loyal to a fault. Strong ally. Environmental Vegan.",
+    "Started life making video games, continued as a sys admin, moved into DevOps, and now a full-stack engineer. Startup founder at heart and hacker for life!",
+  ],
+};
 
 export const skills: (Skill | "break")[] = [
   // Development Skills

@@ -76,6 +76,23 @@ export const default_commands = (options: ResponsiveOptions): Command[] => [
   },
 ];
 
+export const buildAboutCommand = (aboutInfo: AboutInfo): Command => {
+  return {
+    name: "about",
+    description: "Learn more about James",
+    execute: (_args, terminal) => {
+      for (const paragraph of aboutInfo.paragraphs) {
+        terminal.writeLine(paragraph);
+        terminal.writeLine("");
+      }
+    },
+  };
+};
+
+export interface AboutInfo {
+  paragraphs: string[];
+}
+
 export interface Skill {
   name: string;
   level: number;
