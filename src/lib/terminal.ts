@@ -5,6 +5,7 @@ import {
   ITerminalOptions,
   ITerminalInitOnlyOptions,
 } from "@xterm/xterm";
+import { WebLinksAddon } from "@xterm/addon-web-links";
 
 export interface CommandOption {
   name: string; // e.g. "--summary"
@@ -48,6 +49,7 @@ export class TerminalService {
 
     this.fitAddon = new FitAddon();
     this.terminal.loadAddon(this.fitAddon);
+    this.terminal.loadAddon(new WebLinksAddon());
 
     this.setupKeyHandlers();
     this.registerDefaultCommands(commands);

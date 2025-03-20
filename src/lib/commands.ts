@@ -401,6 +401,25 @@ export const createShutdownCommand = (onShutdown: () => void): Command => {
   return withHelpOption(command);
 };
 
+export const buildSourceCommand = (): Command => {
+  const command: Command = {
+    name: "source",
+    description: "View the source code for this project",
+    aliases: ["github"],
+    execute: (_args, terminal) => {
+      terminal.writeLine("View the source code for this terminal:");
+      terminal.writeLine("");
+      terminal.writeLine(
+        "\x1b[1;34;4mhttps://github.com/JamesTimms/web-terminal\x1b[0m",
+      );
+      terminal.writeLine("");
+      terminal.writeLine("Feel free to star the repo if you like it!");
+    },
+  };
+
+  return withHelpOption(command);
+};
+
 export function printCommandHelp(
   command: Command,
   terminal: TerminalService,

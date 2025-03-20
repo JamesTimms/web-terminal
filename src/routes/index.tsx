@@ -12,11 +12,12 @@ import {
 import {
   default_commands,
   buildSkillCommand,
+  ResponsiveOptions,
+  buildSourceCommand,
+  createShutdownCommand,
   buildAchievementsCommand,
   buildCertificationsCommand,
   buildWorkExperienceCommand,
-  createShutdownCommand,
-  ResponsiveOptions,
 } from "~/lib/commands";
 import { useIsDesktop } from "~/hooks/useScreenSize";
 
@@ -53,6 +54,7 @@ export const Route = createFileRoute("/")({
         buildWorkExperienceCommand(workExperience, responsiveOptions),
         buildCertificationsCommand(certifications, responsiveOptions),
         buildAchievementsCommand(achievements, responsiveOptions),
+        buildSourceCommand(),
         createShutdownCommand(handleShutdown),
       ],
       [responsiveOptions, handleShutdown],
