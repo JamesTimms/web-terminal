@@ -543,7 +543,7 @@ export const buildAchievementsCommand = (
 
 export const createShutdownCommand = (
   onShutdown: () => void,
-  delay: number = 300,
+  delay: number = 600,
 ): Command => {
   const command: Command = {
     name: "shutdown",
