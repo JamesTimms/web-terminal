@@ -21,6 +21,7 @@ import {
 } from "~/lib/commands";
 import { useIsDesktop } from "~/hooks/useScreenSize";
 import { usePowerOnSound, usePowerOffSound } from "~/hooks/useSound";
+import { Monitor } from "~/components/monitor";
 
 export const Route = createFileRoute("/")({
   component: () => {
@@ -33,8 +34,8 @@ export const Route = createFileRoute("/")({
 
     const terminalDimensions = useMemo(
       () => ({
-        cols: isDesktop ? 120 : 60,
-        rows: 36,
+        cols: isDesktop ? 100 : 60,
+        rows: 38,
       }),
       [isDesktop],
     );
@@ -103,7 +104,11 @@ export const Route = createFileRoute("/")({
               </button>
             </div>
           ) : (
-            <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
+            <Monitor
+              className="crt-wrapper mx-auto border-slate-500"
+              width={1024}
+              height={768}
+            >
               <CrtScreen ref={crtScreenRef}>
                 <DesktopBackground className="h-full w-full bg-slate-800">
                   <Terminal
@@ -121,7 +126,7 @@ export const Route = createFileRoute("/")({
                   />
                 </DesktopBackground>
               </CrtScreen>
-            </div>
+            </Monitor>
           )}
         </div>
       </div>

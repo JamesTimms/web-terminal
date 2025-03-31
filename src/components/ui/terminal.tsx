@@ -48,7 +48,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
         if (serviceRef.current || !terminalRef.current) return;
 
         if (terminalRef.current) {
-          // HACK: Hide scrollbar
+          // HACK: Hide scrollbar and ensure full width
           const style = document.createElement("style");
           style.textContent = `
           .xterm-viewport::-webkit-scrollbar { 
@@ -91,7 +91,9 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       <div
         ref={ref}
         className={cn(
-          "relative h-full w-full overflow-hidden p-2 md:p-8",
+          "relative h-full w-full overflow-hidden p-6 pr-0 md:p-8 md:pr-2",
+          // HACK: Terminal reserves 23px for scrollbar, as we're not using the
+          // scrollbar, adjust padding to account for this.
           className,
         )}
         style={{
@@ -109,7 +111,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
             const value = target.value;
 
             if (!value || !serviceRef.current) return;
-            serviceRef.current.handleMobileInput(value);
+            serviceRef.current.handleInput(value);
             target.value = "";
           }}
           onKeyDown={async (event) => {

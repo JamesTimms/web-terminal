@@ -357,7 +357,11 @@ export class TerminalService {
     this.fitAddon.fit();
   }
 
-  public handleMobileInput(text: string) {
+  public handleInput(text: string) {
+    if (!this.hasInitalised) {
+      return;
+    }
+
     for (const char of text) {
       this.commandBuffer += char;
       this.terminal.write(char);
