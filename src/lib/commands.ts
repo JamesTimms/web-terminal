@@ -177,7 +177,7 @@ export const sleep: Command = {
     if (!args.includes("--silent") && !args.includes("-s")) {
       terminal.writeLine(`Sleeping for ${ms}ms...`);
     }
-    await new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   },
 };
 
@@ -665,11 +665,10 @@ export function withHelpOption(command: Command): Command {
 
   const commandWithHelp = (args: string[], terminal: TerminalService) => {
     if (args.includes("--help") || args.includes("-h")) {
-      printCommandHelp(command as Command, terminal);
-      return;
+      return printCommandHelp(command as Command, terminal);
     }
 
-    originalCommand(args, terminal);
+    return originalCommand(args, terminal);
   };
 
   const helpOption: CommandOption = {

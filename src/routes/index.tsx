@@ -108,8 +108,9 @@ export const Route = createFileRoute("/")({
                     commands={commands}
                     onFirstRender={playPowerOnSound}
                     bootCommands={[
+                      "sleep 1000 -s",
                       "boot",
-                      "sleep 500 -s",
+                      "sleep 250 -s",
                       "clear -s",
                       "sleep 250 -s",
                       "welcome",
