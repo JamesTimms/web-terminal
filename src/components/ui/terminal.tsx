@@ -9,7 +9,7 @@ interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
   options?: ITerminalOptions & ITerminalInitOnlyOptions;
   commands?: Command[];
   bootCommands?: string[];
-  onFirstRender?: () => void;
+  onShutdown?: () => void;
 }
 
 const DesktopBackground = forwardRef<
@@ -34,7 +34,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       options,
       commands,
       bootCommands = [welcomeCommand.name],
-      onFirstRender,
+      onShutdown,
       className,
       ...props
     },
@@ -63,13 +63,16 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
           terminalRef.current.appendChild(style);
         }
 
-        const service = new TerminalService(options, commands, bootCommands);
+        const service = new TerminalService(
+          options,
+          commands,
+          bootCommands,
+          onShutdown,
+        );
         serviceRef.current = service;
 
         await service.mount(terminalRef.current);
         service.fit();
-
-        onFirstRender?.();
 
         const handleResize = () => service.fit();
         window.addEventListener("resize", handleResize);
@@ -82,7 +85,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       };
 
       mountTerminal();
-    }, [options, onFirstRender]);
+    }, [options, onShutdown]);
 
     return (
       <div

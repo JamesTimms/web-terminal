@@ -25,6 +25,7 @@ import { usePowerOnSound, usePowerOffSound } from "~/hooks/useSound";
 export const Route = createFileRoute("/")({
   component: () => {
     const [isStarted, setIsStarted] = useState(false);
+    const [isPoweredOn, setIsPoweredOn] = useState(false);
     const crtScreenRef = useRef<CrtScreenHandle>(null);
     const playPowerOnSound = usePowerOnSound();
     const playPowerOffSound = usePowerOffSound();
@@ -41,6 +42,7 @@ export const Route = createFileRoute("/")({
     const handleShutdown = useCallback(() => {
       if (!crtScreenRef.current) return;
       playPowerOffSound();
+      setIsPoweredOn(false);
       crtScreenRef.current.powerOff();
     }, [playPowerOffSound]);
 
@@ -84,18 +86,20 @@ export const Route = createFileRoute("/")({
 
     const handleStart = useCallback(() => {
       setIsStarted(true);
+      setIsPoweredOn(true);
+      playPowerOnSound();
     }, [playPowerOnSound]);
 
     return (
       <div className="min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12">
         <div className="container mx-auto px-1 sm:px-4 sm:py-4 md:px-4 md:py-4">
-          {!isStarted ? (
+          {!isStarted || !isPoweredOn ? (
             <div className="flex h-[768px] items-center justify-center">
               <button
                 onClick={handleStart}
                 className="rounded-lg bg-slate-800 px-8 py-4 font-mono text-xl text-slate-200 shadow-lg transition-colors hover:bg-slate-900"
               >
-                Start Terminal
+                Power On
               </button>
             </div>
           ) : (
@@ -106,7 +110,6 @@ export const Route = createFileRoute("/")({
                     className="rounded-lg border border-slate-600"
                     options={terminalOptions}
                     commands={commands}
-                    onFirstRender={playPowerOnSound}
                     bootCommands={[
                       "sleep 1000 -s",
                       "boot",

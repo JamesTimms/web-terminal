@@ -36,6 +36,7 @@ export class TerminalService {
   private commandBuffer = "";
   private cursorPosition = 0;
   private hasInitalised = false;
+  private onShutdown?: () => void;
   public commands: Map<string, Command> = new Map();
   private aliases: Map<string, string> = new Map();
   private commandHistory: string[] = [];
@@ -47,8 +48,10 @@ export class TerminalService {
     options: ITerminalOptions & ITerminalInitOnlyOptions = {},
     commands: Command[] = [],
     bootCommands: string[] = ["welcome"],
+    onShutdown?: () => void,
   ) {
     this.terminal = new XTerm(options);
+    this.onShutdown = onShutdown;
 
     this.fitAddon = new FitAddon();
     this.terminal.loadAddon(this.fitAddon);
@@ -359,5 +362,9 @@ export class TerminalService {
       this.commandBuffer += char;
       this.terminal.write(char);
     }
+  }
+
+  public shutdown() {
+    this.onShutdown?.();
   }
 }

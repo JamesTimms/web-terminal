@@ -541,16 +541,20 @@ export const buildAchievementsCommand = (
   return withHelpOption(command);
 };
 
-export const createShutdownCommand = (onShutdown: () => void): Command => {
+export const createShutdownCommand = (
+  onShutdown: () => void,
+  delay: number = 300,
+): Command => {
   const command: Command = {
     name: "shutdown",
     description: "Shutdown the terminal",
     aliases: ["exit"],
     execute: (_args, terminal) => {
       terminal.writeLine("Shutting down...");
+      terminal.shutdown();
 
       if (!onShutdown) return;
-      setTimeout(onShutdown, 300);
+      setTimeout(onShutdown, delay);
     },
   };
 
