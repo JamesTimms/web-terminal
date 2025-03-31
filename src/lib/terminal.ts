@@ -158,14 +158,16 @@ export class TerminalService {
       this.cursorPosition = 0;
 
       await this.processCommand(input);
-    } else {
-      this.commandBuffer = "";
-      this.cursorPosition = 0;
       this.writePrompt();
+      return;
     }
+
+    this.commandBuffer = "";
+    this.cursorPosition = 0;
+    this.writePrompt();
   }
 
-  public async processCommand(input: string, silent: boolean = false) {
+  public async processCommand(input: string) {
     const parts = input.trim().split(/\s+/);
     const commandName = parts[0].toLowerCase();
     const args = parts.slice(1);
@@ -176,7 +178,6 @@ export class TerminalService {
     if (!command) {
       this.writeLine(`Command not found: ${commandName}`);
       this.writeLine(`Type 'help' to see available commands`);
-      this.writePrompt();
       return;
     }
 
@@ -188,10 +189,6 @@ export class TerminalService {
       }
     } catch (error) {
       this.writeLine(`\x1b[31mError executing command: ${error}\x1b[0m`);
-    }
-
-    if (!silent) {
-      this.writePrompt();
     }
   }
 
@@ -307,7 +304,7 @@ export class TerminalService {
     this.terminal.write("$ ");
   }
 
-  public mount(container: HTMLElement) {
+  public async mount(container: HTMLElement) {
     if (!this.terminal) return;
 
     this.terminal.open(container);
@@ -320,7 +317,7 @@ export class TerminalService {
     });
 
     if (!this.hasInitalised) {
-      this.runBootCommands();
+      await this.runBootCommands();
       this.hasInitalised = true;
     }
 
@@ -329,9 +326,8 @@ export class TerminalService {
 
   private async runBootCommands() {
     for (const commandName of this.bootCommands) {
-      await this.processCommand(commandName, true);
+      await this.processCommand(commandName);
     }
-    this.writePrompt();
   }
 
   public dispose() {

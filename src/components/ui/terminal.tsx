@@ -44,20 +44,13 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     const serviceRef = useRef<TerminalService | null>(null);
 
     useEffect(() => {
-      if (serviceRef.current || !terminalRef.current) return;
+      const mountTerminal = async () => {
+        if (serviceRef.current || !terminalRef.current) return;
 
-      const service = new TerminalService(options, commands, bootCommands);
-      serviceRef.current = service;
-
-      service.mount(terminalRef.current);
-      service.fit();
-
-      onFirstRender?.();
-
-      if (terminalRef.current) {
-        // HACK: Hide scrollbar
-        const style = document.createElement("style");
-        style.textContent = `
+        if (terminalRef.current) {
+          // HACK: Hide scrollbar
+          const style = document.createElement("style");
+          style.textContent = `
           .xterm-viewport::-webkit-scrollbar { 
             width: 0px !important;
             height: 0px !important;
@@ -67,17 +60,28 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
             -ms-overflow-style: none !important;
           }
         `;
-        terminalRef.current.appendChild(style);
-      }
+          terminalRef.current.appendChild(style);
+        }
 
-      const handleResize = () => service.fit();
-      window.addEventListener("resize", handleResize);
+        const service = new TerminalService(options, commands, bootCommands);
+        serviceRef.current = service;
 
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        service.dispose();
-        serviceRef.current = null;
+        await service.mount(terminalRef.current);
+        service.fit();
+
+        onFirstRender?.();
+
+        const handleResize = () => service.fit();
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+          window.removeEventListener("resize", handleResize);
+          service.dispose();
+          serviceRef.current = null;
+        };
       };
+
+      mountTerminal();
     }, [options, onFirstRender]);
 
     return (
