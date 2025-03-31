@@ -20,26 +20,22 @@
   background-color: #1a1a1a;
 }
 
-.monitor-power-led {
-  position: absolute;
-  top: -8px;
-  right: -4px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  transition:
-    background-color 0.3s,
-    box-shadow 0.3s;
-}
-
 .monitor-power-led-off {
-  background-color: #505050;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  background-color: #8b0000;
+  border: 1px solid #4a4a4a;
+  box-shadow:
+    inset 0 0 2px #400000,
+    0 0 8px rgba(139, 0, 0, 0.6),
+    0 0 16px rgba(139, 0, 0, 0.4),
+    0 0 24px rgba(139, 0, 0, 0.2);
 }
 
 .monitor-power-led-on {
-  background-color: #00ff00;
+  background-color: #32cd32;
+  border: 1px solid #4a4a4a;
   box-shadow:
-    0 0 4px #00ff00,
-    0 0 6px rgba(0, 255, 0, 0.6);
+    inset 0 0 2px #006400,
+    0 0 8px rgba(50, 205, 50, 0.8),
+    0 0 16px rgba(50, 205, 50, 0.6),
+    0 0 24px rgba(50, 205, 50, 0.4);
 }

@@ -66,17 +66,14 @@ export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
             <div className="font-helvetica col-span-4 col-start-11 text-center text-xs text-gray-700">
               TinkMaster 750s
             </div>
-            <div className="col-span-2 col-start-11 flex justify-start pl-8">
+            <div className="col-span-2 col-start-11 flex items-center justify-start gap-2">
               <div
                 className={cn(
-                  "monitor-power-led absolute -top-2 -right-1 h-1.5 w-1.5 rounded-full transition-all",
-                  isPowered ? "bg-green-500" : "bg-neutral-600",
+                  "h-2 w-4 rounded-[20%] transition-all duration-300",
+                  isPowered ? "monitor-power-led-on" : "monitor-power-led-off",
                 )}
               />
-              <button
-                onClick={onPowerClick}
-                className="monitor-power-button relative h-6 w-6 cursor-pointer rounded border-none bg-neutral-800 transition-colors hover:bg-neutral-700 active:bg-neutral-900"
-              ></button>
+              <button onClick={onPowerClick} className="monitor-power-button" />
             </div>
           </div>
         </div>
