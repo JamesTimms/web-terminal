@@ -1,4 +1,6 @@
 import { forwardRef, useState, useEffect, useImperativeHandle } from "react";
+
+import "./crt-screen.styles.css";
 import { cn } from "~/lib/utils";
 
 export type ChromaticStrength = "subtle" | "normal" | "strong" | "extreme";

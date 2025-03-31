@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./crt-effects.css";
 
 @theme {
   --font-retro: "VT323", "Press Start 2P", monospace;
