@@ -9,6 +9,7 @@ interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
   options?: ITerminalOptions & ITerminalInitOnlyOptions;
   commands?: Command[];
   bootCommands?: string[];
+  onFirstRender?: () => void;
 }
 
 const DesktopBackground = forwardRef<
@@ -33,6 +34,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       options,
       commands,
       bootCommands = [welcomeCommand.name],
+      onFirstRender,
       className,
       ...props
     },
@@ -49,6 +51,8 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
 
       service.mount(terminalRef.current);
       service.fit();
+
+      onFirstRender?.();
 
       if (terminalRef.current) {
         // HACK: Hide scrollbar
@@ -74,7 +78,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
         service.dispose();
         serviceRef.current = null;
       };
-    }, [options]);
+    }, [options, onFirstRender]);
 
     return (
       <div
