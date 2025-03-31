@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+.crt-wrapper {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--screen-radius);
+}
+
 @theme {
   --font-retro: "VT323", "Press Start 2P", monospace;
   --font-pixel: "Press Start 2P", monospace;

@@ -14,7 +14,7 @@ export interface CrtScreenProps {
   onPowerOff?: () => void;
 }
 
-export interface CrtScreenHandle {
+export interface CrtScreenInterface {
   powerOff: () => void;
 }
 
@@ -158,7 +158,7 @@ const TextBloomFilter = ({ type = "subtle" }: { type?: BloomType }) => {
   );
 };
 
-const CrtScreen = forwardRef<CrtScreenHandle, CrtScreenProps>(
+const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
   (
     {
       children,

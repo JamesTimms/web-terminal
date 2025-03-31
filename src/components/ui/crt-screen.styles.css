@@ -1,9 +1,3 @@
-.crt-wrapper {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--screen-radius);
-}
-
 .crt-rgb {
   position: absolute;
   top: 0;

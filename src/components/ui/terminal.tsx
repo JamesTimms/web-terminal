@@ -5,8 +5,10 @@ import { cn } from "~/lib/utils";
 import { Command, TerminalService } from "~/lib/terminal";
 import { welcomeCommand } from "~/lib/commands";
 
+export type TerminalOptions = ITerminalOptions & ITerminalInitOnlyOptions;
+
 interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
-  options?: ITerminalOptions & ITerminalInitOnlyOptions;
+  options?: TerminalOptions;
   commands?: Command[];
   bootCommands?: string[];
   onShutdown?: () => void;
