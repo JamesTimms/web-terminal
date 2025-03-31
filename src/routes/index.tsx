@@ -25,8 +25,7 @@ import { Monitor } from "~/components/monitor";
 
 export const Route = createFileRoute("/")({
   component: () => {
-    const [isStarted, setIsStarted] = useState(false);
-    const [isPoweredOn, setIsPoweredOn] = useState(false);
+    const [powerState, setPowerState] = useState<"on" | "off">("off");
     const crtScreenRef = useRef<CrtScreenHandle>(null);
     const playPowerOnSound = usePowerOnSound();
     const playPowerOffSound = usePowerOffSound();
@@ -40,10 +39,15 @@ export const Route = createFileRoute("/")({
       [isDesktop],
     );
 
+    const handleStart = useCallback(() => {
+      setPowerState("on");
+      playPowerOnSound();
+    }, [playPowerOnSound]);
+
     const handleShutdown = useCallback(() => {
       if (!crtScreenRef.current) return;
+      setPowerState("off");
       playPowerOffSound();
-      setIsPoweredOn(false);
       crtScreenRef.current.powerOff();
     }, [playPowerOffSound]);
 
@@ -85,30 +89,17 @@ export const Route = createFileRoute("/")({
       [isDesktop, terminalDimensions.cols, terminalDimensions.rows],
     );
 
-    const handleStart = useCallback(() => {
-      setIsStarted(true);
-      setIsPoweredOn(true);
-      playPowerOnSound();
-    }, [playPowerOnSound]);
-
     return (
       <div className="min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12">
         <div className="container mx-auto px-1 sm:px-4 sm:py-4 md:px-4 md:py-4">
-          {!isStarted || !isPoweredOn ? (
-            <div className="flex h-[768px] items-center justify-center">
-              <button
-                onClick={handleStart}
-                className="rounded-lg bg-slate-800 px-8 py-4 font-mono text-xl text-slate-200 shadow-lg transition-colors hover:bg-slate-900"
-              >
-                Power On
-              </button>
-            </div>
-          ) : (
-            <Monitor
-              className="crt-wrapper mx-auto border-slate-500"
-              width={1024}
-              height={768}
-            >
+          <Monitor
+            className="crt-wrapper mx-auto border-slate-500"
+            width={1024}
+            height={768}
+            isPowered={powerState === "on"}
+            onPowerClick={powerState === "on" ? handleShutdown : handleStart}
+          >
+            {powerState === "on" && (
               <CrtScreen ref={crtScreenRef}>
                 <DesktopBackground className="h-full w-full bg-slate-800">
                   <Terminal
@@ -126,8 +117,8 @@ export const Route = createFileRoute("/")({
                   />
                 </DesktopBackground>
               </CrtScreen>
-            </Monitor>
-          )}
+            )}
+          </Monitor>
         </div>
       </div>
     );
