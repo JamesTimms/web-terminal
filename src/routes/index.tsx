@@ -40,8 +40,10 @@ export const Route = createFileRoute("/")({
     );
 
     const handleStart = useCallback(() => {
-      setPowerState("on");
+      if (!crtScreenRef.current) return;
+      crtScreenRef.current.powerOn();
       playPowerOnSound();
+      setPowerState("on");
     }, [playPowerOnSound]);
 
     const handleShutdown = useCallback(() => {
@@ -102,7 +104,6 @@ export const Route = createFileRoute("/")({
             >
               <Screen
                 ref={crtScreenRef}
-                powerState={powerState}
                 terminalOptions={terminalOptions}
                 commands={commands}
               />
@@ -122,7 +123,6 @@ export const Route = createFileRoute("/")({
                 <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
                   <Screen
                     ref={crtScreenRef}
-                    powerState={powerState}
                     terminalOptions={terminalOptions}
                     commands={commands}
                   />

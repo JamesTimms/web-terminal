@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect, useImperativeHandle } from "react";
+import { forwardRef, useState, useImperativeHandle } from "react";
 
 import "./crt-screen.styles.css";
 import { cn } from "~/lib/utils";
@@ -7,7 +7,7 @@ export type ChromaticStrength = "subtle" | "normal" | "strong" | "extreme";
 export type BloomType = "strong" | "subtle";
 
 export interface CrtScreenProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   className?: string;
   chromaticStrength?: ChromaticStrength;
   bloomType?: BloomType;
@@ -16,6 +16,7 @@ export interface CrtScreenProps {
 
 export interface CrtScreenInterface {
   powerOff: () => void;
+  powerOn: () => void;
 }
 
 const hideSvgFilter = {
@@ -182,18 +183,13 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
           if (onPowerOff) onPowerOff();
         }, 600); // Match animation duration
       },
-    }));
-
-    useEffect(() => {
-      const timer = setTimeout(() => {
+      powerOn: () => {
         setPowerState("turning-on");
         setTimeout(() => {
           setPowerState("on");
         }, 1500); // Match animation duration
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }, []);
+      },
+    }));
 
     const getFilterString = () => {
       const filters = [];
@@ -218,12 +214,11 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
     if (powerState === "off") {
       return (
         <div
-          className={cn(
-            "rounded-md bg-slate-950",
-            "aspect-video h-full w-full",
-          )}
+          className={cn("relative h-full w-full bg-slate-800", className)}
           {...props}
-        ></div>
+        >
+          <div className="crt-curvature" />
+        </div>
       );
     }
 
@@ -231,27 +226,25 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
       <>
         <ChromaticAberrationFilter strength={chromaticStrength} />
         <TextBloomFilter type={bloomType} />
-
-        <div
-          className={cn(
-            "bg-slate-950",
-            "h-full w-full sm:aspect-video",
-            getAnimationClass(),
-            className,
-          )}
-          style={{
-            filter: getFilterString(),
-            position: "relative",
-          }}
-          {...props}
-        >
-          {children}
-          <div className="crt-glow" />
-          <div className="crt-rgb" />
-          <div className="crt-vignette" />
-          <div className="crt-scanlines" />
-          <div className="crt-curvature" />
-          <div className="crt-flicker" />
+        <div className={cn("relative h-full w-full", className)}>
+          <div
+            className={cn(
+              "relative h-full w-full bg-slate-800",
+              getAnimationClass(),
+            )}
+            style={{
+              filter: getFilterString(),
+            }}
+            {...props}
+          >
+            {children}
+            <div className="crt-glow" />
+            <div className="crt-rgb" />
+            <div className="crt-vignette" />
+            <div className="crt-scanlines" />
+            <div className="crt-curvature" />
+            <div className="crt-flicker" />
+          </div>
         </div>
       </>
     );

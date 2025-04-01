@@ -64,13 +64,13 @@
 
 .crt-curvature {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
   background: radial-gradient(
-    circle at center,
-    transparent 80%,
+    ellipse at center,
+    transparent 60%,
     rgba(0, 0, 0, 0.8) 100%
   );
   pointer-events: none;

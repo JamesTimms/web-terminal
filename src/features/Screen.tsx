@@ -6,15 +6,12 @@ import { Terminal, DesktopBackground } from "~/components/ui/terminal";
 import { CrtScreen, CrtScreenInterface } from "~/components/ui/crt-screen";
 
 interface ScreenProps {
-  powerState: "on" | "off";
   terminalOptions: TerminalOptions;
   commands: Command[];
 }
 
 export const Screen = forwardRef<CrtScreenInterface, ScreenProps>(
-  ({ powerState, terminalOptions, commands }, ref) => {
-    if (powerState !== "on") return null;
-
+  ({ terminalOptions, commands }, ref) => {
     return (
       <CrtScreen ref={ref}>
         <DesktopBackground className="h-full w-full bg-slate-800">
