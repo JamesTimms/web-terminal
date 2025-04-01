@@ -12,9 +12,11 @@ export const useSound = (filepath: string) => {
 };
 
 export const usePowerOnSound = () => {
-  return useSound("/src/assets/turning-on.mp3");
+  return useSound("/turning-on.mp3");
 };
+
 export const usePowerOffSound = () => {
-  return useSound("/src/assets/turning-off.mp3");
+  return useSound("/turning-off.mp3");
 };
+
 export default useSound;
