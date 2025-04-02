@@ -1,41 +1,64 @@
 .monitor-power-button {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  width: 74px;
+  height: 64px;
+  border-radius: 10%;
   border: none;
   cursor: pointer;
-  background-color: #2a2a2a;
+  background-color: rgba(42, 42, 42, 0.02);
   position: relative;
-  box-shadow:
-    inset 0 1px 2px rgba(255, 255, 255, 0.3),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.3);
   transition: background-color 0.2s;
 }
 
 .monitor-power-button:hover {
-  background-color: #3a3a3a;
+  background-color: rgba(42, 42, 42, 0.075);
 }
 
 .monitor-power-button:active {
-  background-color: #1a1a1a;
+  background-color: rgba(42, 42, 42, 0.15);
 }
 
 .monitor-power-led-off {
-  background-color: #8b0000;
-  border: 1px solid #4a4a4a;
+  background-color: rgba(120, 20, 20, 0.6);
   box-shadow:
-    inset 0 0 2px #400000,
+    inset 0 0 2px #402020,
     0 0 8px rgba(139, 0, 0, 0.6),
     0 0 16px rgba(139, 0, 0, 0.4),
     0 0 24px rgba(139, 0, 0, 0.2);
 }
 
 .monitor-power-led-on {
-  background-color: #32cd32;
-  border: 1px solid #4a4a4a;
+  background-color: rgba(50, 205, 50, 0.8);
   box-shadow:
     inset 0 0 2px #006400,
     0 0 8px rgba(50, 205, 50, 0.8),
     0 0 16px rgba(50, 205, 50, 0.6),
     0 0 24px rgba(50, 205, 50, 0.4);
+}
+
+.monitor-screen-mask {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  clip-path: path(
+    "m7.14 31.258c5.2326-11.586 8.5841-13.112 21.662-15.397 66.372-9.5956 163.67-14.441 279.87-15.369 80.857-0.65157 148.7-2.3153 269.43 8.66 14.566 2.8345 22.307 7.1118 24.109 18.665 10.966 56.268 13.133 320.01 1.4298 396.22-4.5436 9.7097-13.712 15.961-25.167 17.936-100.01 9.5228-191.67 10.934-281.88 11.185-101.06 0.07295-253.47-2.246-264.41-8.1167-11.783-3.0847-18.179-9.0941-21.385-18.81-12.391-106.36-14.799-336.46-3.6596-394.97z"
+  );
+  transform-origin: top left;
+  transform: scale(1.67);
+  background: #000;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.monitor-screen-mask > * {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(0.599);
+  transform-origin: top left;
 }

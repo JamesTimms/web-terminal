@@ -18,10 +18,11 @@ import {
   buildCertificationsCommand,
   buildWorkExperienceCommand,
 } from "~/lib/commands";
+import { cn } from "~/lib/utils";
+import { Screen } from "~/features/Screen";
+import { MonitorOverlay } from "~/components/monitor";
 import { useIsDesktop } from "~/hooks/useScreenSize";
 import { usePowerOnSound, usePowerOffSound } from "~/hooks/useSound";
-import { Monitor } from "~/components/monitor";
-import { Screen } from "~/features/Screen";
 
 export const Route = createFileRoute("/")({
   component: () => {
@@ -92,45 +93,48 @@ export const Route = createFileRoute("/")({
     );
 
     return (
-      <div className="min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12">
-        <div className="container mx-auto px-1 sm:px-4 sm:py-4 md:px-4 md:py-4">
-          {isDesktop ? (
-            <Monitor
-              className="crt-wrapper mx-auto border-slate-500"
-              width={1024}
-              height={768}
-              isPowered={powerState === "on"}
-              onPowerClick={powerState === "on" ? handleShutdown : handleStart}
-            >
-              <Screen
-                ref={crtScreenRef}
-                terminalOptions={terminalOptions}
-                commands={commands}
-              />
-            </Monitor>
-          ) : (
-            <>
-              {powerState === "off" ? (
-                <div className="flex h-[768px] items-center justify-center">
-                  <button
-                    onClick={handleStart}
-                    className="rounded-lg bg-slate-800 px-8 py-4 font-mono text-xl text-slate-200 shadow-lg transition-colors hover:bg-slate-900"
-                  >
-                    Power On
-                  </button>
-                </div>
-              ) : (
-                <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
-                  <Screen
-                    ref={crtScreenRef}
-                    terminalOptions={terminalOptions}
-                    commands={commands}
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </div>
+      <div
+        className={cn(
+          "min-h-screen min-w-screen bg-slate-700 bg-no-repeat py-4 sm:py-12",
+          "bg-[url(desk.jpeg)] bg-cover bg-fixed bg-center",
+        )}
+      >
+        {isDesktop ? (
+          <MonitorOverlay
+            className="crt-wrapper mx-auto border-slate-500"
+            width={1024}
+            height={768}
+            isPowered={powerState === "on"}
+            onPowerClick={powerState === "on" ? handleShutdown : handleStart}
+          >
+            <Screen
+              ref={crtScreenRef}
+              terminalOptions={terminalOptions}
+              commands={commands}
+            />
+          </MonitorOverlay>
+        ) : (
+          <>
+            {powerState === "off" ? (
+              <div className="flex h-[768px] items-center justify-center">
+                <button
+                  onClick={handleStart}
+                  className="rounded-lg bg-slate-800 px-8 py-4 font-mono text-xl text-slate-200 shadow-lg transition-colors hover:bg-slate-900"
+                >
+                  Power On
+                </button>
+              </div>
+            ) : (
+              <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
+                <Screen
+                  ref={crtScreenRef}
+                  terminalOptions={terminalOptions}
+                  commands={commands}
+                />
+              </div>
+            )}
+          </>
+        )}
       </div>
     );
   },
