@@ -95,8 +95,9 @@ export const Route = createFileRoute("/")({
     return (
       <div
         className={cn(
-          "min-h-screen min-w-screen bg-slate-700 bg-no-repeat py-4 sm:py-12",
-          "bg-[url(desk.jpeg)] bg-cover bg-fixed bg-center",
+          "min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12",
+          "bg-[#8B5E3C]",
+          "bg-[url(desk.jpeg)] bg-[length:2400px_1350px] bg-fixed bg-top bg-no-repeat",
         )}
       >
         {isDesktop ? (
