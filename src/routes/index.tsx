@@ -20,17 +20,37 @@ import {
 } from "~/lib/commands";
 import { cn } from "~/lib/utils";
 import { Screen } from "~/features/Screen";
-import { MonitorOverlay } from "~/components/monitor";
 import { useIsDesktop } from "~/hooks/useScreenSize";
-import { usePowerOnSound, usePowerOffSound } from "~/hooks/useSound";
+import { MonitorOverlay } from "~/components/monitor";
+import { usePowerCycle } from "~/hooks/usePowerCycle";
+import { useZoomAnimation } from "~/hooks/useZoomAnimation";
+
+export type PowerState = "on" | "off";
 
 export const Route = createFileRoute("/")({
   component: () => {
-    const [powerState, setPowerState] = useState<"on" | "off">("off");
     const crtScreenRef = useRef<CrtScreenInterface>(null);
-    const playPowerOnSound = usePowerOnSound();
-    const playPowerOffSound = usePowerOffSound();
     const isDesktop = useIsDesktop();
+    const [endScale, setEndScale] = useState(1.5);
+
+    const { zoomState, handleZoomIn, handleZoomOut } = useZoomAnimation({
+      options: {
+        duration: 1500,
+        startScale: 1.08,
+        endScale: endScale,
+      },
+    });
+    const { powerState, onPowerOn, onPowerOff } = usePowerCycle(crtScreenRef);
+
+    const onMonitorOn = useCallback(() => {
+      onPowerOn();
+      handleZoomIn();
+    }, [onPowerOn, handleZoomIn]);
+
+    const onMonitorOff = useCallback(() => {
+      onPowerOff();
+      handleZoomOut();
+    }, [onPowerOff, handleZoomOut]);
 
     const terminalDimensions = useMemo(
       () => ({
@@ -39,20 +59,6 @@ export const Route = createFileRoute("/")({
       }),
       [isDesktop],
     );
-
-    const handleStart = useCallback(() => {
-      if (!crtScreenRef.current) return;
-      crtScreenRef.current.powerOn();
-      playPowerOnSound();
-      setPowerState("on");
-    }, [playPowerOnSound]);
-
-    const handleShutdown = useCallback(() => {
-      if (!crtScreenRef.current) return;
-      setPowerState("off");
-      playPowerOffSound();
-      crtScreenRef.current.powerOff();
-    }, [playPowerOffSound]);
 
     const responsiveOptions = useMemo<ResponsiveOptions>(
       () => ({
@@ -69,9 +75,9 @@ export const Route = createFileRoute("/")({
         buildCertificationsCommand(certifications, responsiveOptions),
         buildAchievementsCommand(achievements, responsiveOptions),
         buildSourceCommand(),
-        createShutdownCommand(handleShutdown),
+        createShutdownCommand(onMonitorOff),
       ],
-      [responsiveOptions, handleShutdown],
+      [responsiveOptions, onMonitorOff],
     );
 
     const terminalOptions = useMemo(
@@ -92,49 +98,56 @@ export const Route = createFileRoute("/")({
       [isDesktop, terminalDimensions.cols, terminalDimensions.rows],
     );
 
-    return (
+    return isDesktop ? (
       <div
         className={cn(
           "min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12",
           "bg-[#8B5E3C]",
           "bg-[url(desk.jpeg)] bg-[length:2400px_1350px] bg-fixed bg-top bg-no-repeat",
+          "fixed top-0 right-0 bottom-0 left-0 overflow-hidden",
+          zoomState === "zooming-in" && "zoom-in-animation",
+          zoomState === "zooming-out" && "zoom-out-animation",
+          (zoomState === "zooming-in" || zoomState === "zooming-out") &&
+            "zoom-transition",
         )}
+        style={{
+          transformOrigin: "center center",
+          transform: `scale(${zoomState === "zoomed" ? endScale : 1})`,
+        }}
       >
-        {isDesktop ? (
-          <MonitorOverlay
-            className="crt-wrapper mx-auto border-slate-500"
-            width={1024}
-            height={768}
-            isPowered={powerState === "on"}
-            onPowerClick={powerState === "on" ? handleShutdown : handleStart}
-          >
+        <MonitorOverlay
+          className="crt-wrapper mx-auto border-slate-500"
+          width={1024}
+          height={768}
+          isPowered={powerState === "on"}
+          onPowerClick={powerState === "on" ? onMonitorOff : onMonitorOn}
+        >
+          <Screen
+            ref={crtScreenRef}
+            terminalOptions={terminalOptions}
+            commands={commands}
+          />
+        </MonitorOverlay>
+      </div>
+    ) : (
+      <div className="fixed top-0 right-0 bottom-0 left-0 min-h-screen min-w-screen overflow-hidden bg-slate-600">
+        {powerState === "off" ? (
+          <div className="flex h-[768px] items-center justify-center">
+            <button
+              onClick={onPowerOn}
+              className="rounded-lg bg-slate-800 px-8 py-4 font-mono text-xl text-slate-200 shadow-lg transition-colors hover:bg-slate-900"
+            >
+              Power On
+            </button>
+          </div>
+        ) : (
+          <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
             <Screen
               ref={crtScreenRef}
               terminalOptions={terminalOptions}
               commands={commands}
             />
-          </MonitorOverlay>
-        ) : (
-          <>
-            {powerState === "off" ? (
-              <div className="flex h-[768px] items-center justify-center">
-                <button
-                  onClick={handleStart}
-                  className="rounded-lg bg-slate-800 px-8 py-4 font-mono text-xl text-slate-200 shadow-lg transition-colors hover:bg-slate-900"
-                >
-                  Power On
-                </button>
-              </div>
-            ) : (
-              <div className="crt-wrapper mx-auto border-2 border-slate-500 shadow-lg md:h-[768px] md:w-[1024px]">
-                <Screen
-                  ref={crtScreenRef}
-                  terminalOptions={terminalOptions}
-                  commands={commands}
-                />
-              </div>
-            )}
-          </>
+          </div>
         )}
       </div>
     );

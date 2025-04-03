@@ -1,0 +1,32 @@
+@keyframes zoom-in {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.5);
+  }
+}
+
+@keyframes zoom-out {
+  0% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.zoom-in-animation {
+  animation: zoom-in 0.75s cubic-bezier(0.2, 0, 0, 1) forwards;
+  transform-origin: center center;
+}
+
+.zoom-out-animation {
+  animation: zoom-out 0.75s cubic-bezier(0.2, 0, 0, 1) forwards;
+  transform-origin: center center;
+}
+
+.zoom-transition {
+  transition: transform 0.375s cubic-bezier(0.2, 0, 0, 1);
+  transform-origin: center center;
+}

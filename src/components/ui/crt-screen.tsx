@@ -1,4 +1,10 @@
-import { forwardRef, useState, useImperativeHandle } from "react";
+import {
+  forwardRef,
+  useState,
+  useImperativeHandle,
+  useRef,
+  useEffect,
+} from "react";
 
 import "./crt-screen.styles.css";
 import { cn } from "~/lib/utils";
@@ -174,19 +180,63 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
     const [powerState, setPowerState] = useState<
       "off" | "on" | "turning-on" | "turning-off"
     >("off");
+    const timeoutRef = useRef<number | null>(null);
+
+    // Clean up timeout when component unmounts
+    useEffect(() => {
+      return () => {
+        if (timeoutRef.current) {
+          window.clearTimeout(timeoutRef.current);
+        }
+      };
+    }, []);
+
+    // Clear pending timeouts
+    const clearPendingTimeouts = () => {
+      if (timeoutRef.current) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
 
     useImperativeHandle(ref, () => ({
       powerOff: () => {
-        setPowerState("turning-off");
-        setTimeout(() => {
+        // Clear any pending timeouts first
+        clearPendingTimeouts();
+
+        // If we're turning on, we need to interrupt
+        if (powerState === "turning-on") {
+          setPowerState("turning-off");
+        } else if (powerState === "on") {
+          setPowerState("turning-off");
+        } else {
+          // Already turning off or off - do nothing
+          return;
+        }
+
+        timeoutRef.current = window.setTimeout(() => {
           setPowerState("off");
           if (onPowerOff) onPowerOff();
+          timeoutRef.current = null;
         }, 600); // Match animation duration
       },
       powerOn: () => {
-        setPowerState("turning-on");
-        setTimeout(() => {
+        // Clear any pending timeouts first
+        clearPendingTimeouts();
+
+        // If we're turning off, we need to interrupt
+        if (powerState === "turning-off") {
+          setPowerState("turning-on");
+        } else if (powerState === "off") {
+          setPowerState("turning-on");
+        } else {
+          // Already turning on or on - do nothing
+          return;
+        }
+
+        timeoutRef.current = window.setTimeout(() => {
           setPowerState("on");
+          timeoutRef.current = null;
         }, 1500); // Match animation duration
       },
     }));

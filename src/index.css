@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./animations.css";
 
 .crt-wrapper {
   position: relative;
