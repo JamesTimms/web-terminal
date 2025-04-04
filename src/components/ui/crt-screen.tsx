@@ -264,7 +264,7 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
     if (powerState === "off") {
       return (
         <div
-          className={cn("relative h-full w-full bg-slate-800", className)}
+          className={cn("relative h-full w-full bg-black", className)}
           {...props}
         >
           <div className="crt-curvature" />
@@ -279,7 +279,7 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
         <div className={cn("relative h-full w-full", className)}>
           <div
             className={cn(
-              "relative h-full w-full bg-slate-800",
+              "relative h-full w-full bg-slate-900",
               getAnimationClass(),
             )}
             style={{

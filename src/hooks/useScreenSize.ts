@@ -70,3 +70,76 @@ export function useBreakpoints() {
 export function useIsDesktop(): boolean {
   return useIsScreenAboveMd();
 }
+
+export function useBackgroundSize(
+  options: {
+    debounce?: number;
+    aspectRatio?: number;
+    minWidth?: number;
+    minHeight?: number;
+    scale?: number;
+  } = {},
+) {
+  const {
+    debounce = 100,
+    aspectRatio = 16 / 9,
+    minWidth = 960,
+    minHeight = 540,
+    scale = 1,
+  } = options;
+
+  const [backgroundSize, setBackgroundSize] = useState<{
+    width: number;
+    height: number;
+  }>({
+    width: 2400,
+    height: 1350,
+  });
+
+  const calculateSize = useCallback(() => {
+    if (typeof window === "undefined") return;
+
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    const screenRatio = screenWidth / screenHeight;
+
+    let width, height;
+
+    if (screenRatio >= aspectRatio) {
+      // Screen is wider than our image aspect ratio
+      // Size by width to ensure full coverage
+      width = Math.max(screenWidth * scale, minWidth);
+      height = width / aspectRatio;
+    } else {
+      // Screen is taller than our image aspect ratio
+      // Size by height to ensure full coverage
+      height = Math.max(screenHeight * scale, minHeight);
+      width = height * aspectRatio;
+    }
+
+    // Round to nearest pixel
+    setBackgroundSize({
+      width: Math.round(width),
+      height: Math.round(height),
+    });
+  }, []);
+
+  useEffect(() => {
+    calculateSize();
+
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(calculateSize, debounce);
+    };
+
+    window.addEventListener("resize", debouncedResize);
+    return () => {
+      window.removeEventListener("resize", debouncedResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [calculateSize, debounce]);
+
+  return backgroundSize;
+}

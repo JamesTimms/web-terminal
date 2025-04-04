@@ -44,10 +44,7 @@ export const MonitorOverlay = forwardRef<HTMLDivElement, MonitorOverlayProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          "relative mx-auto w-fit scale-[0.70] pt-[62px] pl-[30px]",
-          className,
-        )}
+        className={cn("relative mx-auto w-fit", className)}
         {...props}
       >
         <div className={`relative md:h-[${height}px] md:w-[${width}px]`}>
