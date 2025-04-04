@@ -6,6 +6,7 @@ export interface SmoothInterpolationOptions {
   speed?: number;
   fps?: number;
   threshold?: number;
+  key?: string;
 }
 
 export interface UseExponentialSmoothingReturn {
@@ -18,7 +19,8 @@ export function useSmoothInterpolation({
   targetValue,
   speed = 2,
   fps = 30,
-  threshold = 0.001,
+  threshold = 0.0005,
+  key = "default",
 }: SmoothInterpolationOptions): UseExponentialSmoothingReturn {
   const positionRef = useRef<number>(initialValue);
   const targetRef = useRef<number>(targetValue ?? initialValue);
@@ -80,13 +82,20 @@ export function useSmoothInterpolation({
   );
 
   useEffect(() => {
+    positionRef.current = initialValue;
+    targetRef.current = targetValue ?? initialValue;
+    setRenderPosition(initialValue);
+
+    // Stop any running animation
+    if (requestRef.current !== null) {
+      cancelAnimationFrame(requestRef.current);
+      requestRef.current = null;
+    }
+    previousTimeRef.current = null;
+
+    // Restart animation
     requestRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (requestRef.current !== null) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [animate]);
+  }, [key, initialValue]);
 
   const setTarget = useCallback(
     (newTarget: number) => {

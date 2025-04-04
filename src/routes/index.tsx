@@ -1,4 +1,4 @@
-import { useRef, useMemo, useCallback, useState } from "react";
+import { useRef, useMemo, useCallback } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { CrtScreenInterface } from "~/components/ui/crt-screen";
@@ -20,11 +20,10 @@ import {
 } from "~/lib/commands";
 import { cn } from "~/lib/utils";
 import { Screen } from "~/features/Screen";
-import { useIsDesktop, useBackgroundSize } from "~/hooks/useScreenSize";
+import { useIsDesktop } from "~/hooks/useScreenSize";
 import { MonitorOverlay } from "~/components/monitor";
 import { usePowerCycle } from "~/hooks/usePowerCycle";
-import useSmoothInterpolation from "~/hooks/useSmoothInterpolation";
-
+import { useFocusMonitor } from "~/hooks/useFocusMonitor";
 export type PowerState = "on" | "off";
 
 export const Route = createFileRoute("/")({
@@ -32,25 +31,22 @@ export const Route = createFileRoute("/")({
     const crtScreenRef = useRef<CrtScreenInterface>(null);
     const isDesktop = useIsDesktop();
 
-    const { position: currentZoom, updateTarget: updateTargetZoom } =
-      useSmoothInterpolation({
-        initialValue: 1,
-        speed: 3,
-        fps: 30,
-      });
-    const backgroundSize = useBackgroundSize();
+    const { currentZoom, focusMonitor, unfocusMonitor } = useFocusMonitor({
+      baseWidth: 2400,
+      baseHeight: 1350,
+    });
 
     const { powerState, onPowerOn, onPowerOff } = usePowerCycle(crtScreenRef);
 
     const onMonitorOn = useCallback(() => {
       onPowerOn();
-      updateTargetZoom(1.75);
-    }, [onPowerOn, updateTargetZoom]);
+      focusMonitor();
+    }, [onPowerOn, focusMonitor]);
 
     const onMonitorOff = useCallback(() => {
       onPowerOff();
-      updateTargetZoom(1);
-    }, [onPowerOff, updateTargetZoom]);
+      unfocusMonitor();
+    }, [onPowerOff, unfocusMonitor]);
 
     const terminalDimensions = useMemo(
       () => ({
@@ -97,8 +93,6 @@ export const Route = createFileRoute("/")({
       }),
       [isDesktop, terminalDimensions.cols, terminalDimensions.rows],
     );
-
-    console.log("currentZoom", currentZoom);
 
     return (
       <div
