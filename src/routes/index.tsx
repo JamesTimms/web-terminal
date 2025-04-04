@@ -36,7 +36,7 @@ export const Route = createFileRoute("/")({
       baseHeight: 1350,
     });
 
-    const { powerState, onPowerOn, onPowerOff } = usePowerCycle(crtScreenRef);
+    const { isOn, onPowerOn, onPowerOff } = usePowerCycle(crtScreenRef);
 
     const onMonitorOn = useCallback(() => {
       onPowerOn();
@@ -115,8 +115,8 @@ export const Route = createFileRoute("/")({
           )}
           width={1024}
           height={768}
-          isPowered={powerState === "on"}
-          onPowerClick={powerState === "on" ? onMonitorOff : onMonitorOn}
+          isPowered={isOn}
+          onPowerClick={isOn ? onMonitorOff : onMonitorOn}
         >
           <Screen
             ref={crtScreenRef}

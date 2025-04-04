@@ -26,9 +26,14 @@ export function usePowerCycle(
     setPowerState("off");
   }, [crtScreenRef, playPowerOffSound]);
 
+  const isOn = powerState === "on";
+  const isOff = powerState === "off";
+
   return {
     powerState,
     onPowerOn,
     onPowerOff,
+    isOn,
+    isOff,
   };
 }
