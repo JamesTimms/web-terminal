@@ -21,9 +21,10 @@ import {
 import { cn } from "~/lib/utils";
 import { Screen } from "~/features/Screen";
 import { useIsDesktop } from "~/hooks/useScreenSize";
-import { MonitorOverlay } from "~/components/monitor";
+import { Monitor } from "~/components/monitor";
 import { usePowerCycle } from "~/hooks/usePowerCycle";
 import { useFocusMonitor } from "~/hooks/useFocusMonitor";
+
 export type PowerState = "on" | "off";
 
 export const Route = createFileRoute("/")({
@@ -108,7 +109,7 @@ export const Route = createFileRoute("/")({
           backgroundSize: `${2400}px ${1350}px`,
         }}
       >
-        <MonitorOverlay
+        <Monitor
           className={cn(
             "crt-wrapper mx-auto border-slate-500",
             "scale-[0.70] pt-[62px] pl-[30px]",
@@ -123,7 +124,7 @@ export const Route = createFileRoute("/")({
             terminalOptions={terminalOptions}
             commands={commands}
           />
-        </MonitorOverlay>
+        </Monitor>
       </div>
     );
   },

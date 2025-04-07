@@ -30,7 +30,7 @@ export function useFocusMonitor(options: UseBackgroundSizeOptions = {}) {
   } = options;
   const prevInitialZoomRef = useRef<number>(1);
   const [initialZoom, setInitialZoom] = useState<number>(1);
-  const [resetKey, setResetKey] = useState<string>("default");
+  const [resetKey, setResetKey] = useState<number>(0);
 
   const calculateDelta = useCallback(() => {
     if (typeof window === "undefined") return;

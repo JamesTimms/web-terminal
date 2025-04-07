@@ -4,7 +4,7 @@ import "./monitor.styles.css";
 import { cn } from "~/lib/utils";
 
 interface MonitorOverlayProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   width?: number;
   height?: number;
@@ -28,7 +28,7 @@ export const ControlButton = forwardRef<
   );
 });
 
-export const MonitorOverlay = forwardRef<HTMLDivElement, MonitorOverlayProps>(
+export const Monitor = forwardRef<HTMLDivElement, MonitorOverlayProps>(
   (
     {
       children,
@@ -47,7 +47,13 @@ export const MonitorOverlay = forwardRef<HTMLDivElement, MonitorOverlayProps>(
         className={cn("relative mx-auto w-fit", className)}
         {...props}
       >
-        <div className={`relative md:h-[${height}px] md:w-[${width}px]`}>
+        <div
+          className="relative"
+          style={{
+            height: `${height}px`,
+            width: `${width}px`,
+          }}
+        >
           <div className="monitor-screen-mask">{children}</div>
         </div>
         <div className="mt-[53px] mr-[53px] grid grid-cols-12 items-center">
@@ -65,6 +71,6 @@ export const MonitorOverlay = forwardRef<HTMLDivElement, MonitorOverlayProps>(
     );
   },
 );
-MonitorOverlay.displayName = "Monitor";
+Monitor.displayName = "Monitor";
 
-export default MonitorOverlay;
+export default Monitor;

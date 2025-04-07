@@ -6,7 +6,7 @@ export interface SmoothInterpolationOptions {
   speed?: number;
   fps?: number;
   threshold?: number;
-  key?: string;
+  key?: number;
 }
 
 export interface UseExponentialSmoothingReturn {
@@ -20,7 +20,7 @@ export function useSmoothInterpolation({
   speed = 2,
   fps = 30,
   threshold = 0.0005,
-  key = "default",
+  key = 0,
 }: SmoothInterpolationOptions): UseExponentialSmoothingReturn {
   const positionRef = useRef<number>(initialValue);
   const targetRef = useRef<number>(targetValue ?? initialValue);
@@ -46,7 +46,6 @@ export function useSmoothInterpolation({
       const dt = (time - previousTimeRef.current) / 1000;
 
       if (time >= nextFrameTimeRef.current) {
-        console.log("animate", time);
         nextFrameTimeRef.current = time + frameDuration;
 
         // Exponential smoothing, https://lisyarus.github.io/blog/posts/exponential-smoothing.html
