@@ -4,6 +4,7 @@ import {
   useImperativeHandle,
   useRef,
   useEffect,
+  HTMLAttributes,
 } from "react";
 
 import "./crt-screen.styles.css";
@@ -12,11 +13,15 @@ import { cn } from "~/lib/utils";
 export type ChromaticStrength = "subtle" | "normal" | "strong" | "extreme";
 export type BloomType = "strong" | "subtle";
 
-export interface CrtScreenProps {
+export interface CrtScreenProps extends HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
   chromaticStrength?: ChromaticStrength;
   bloomType?: BloomType;
+  screenSize?: {
+    width: number;
+    height: number;
+  };
   onPowerOff?: () => void;
 }
 
@@ -172,6 +177,7 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
       className,
       chromaticStrength = "subtle",
       bloomType = "subtle",
+      screenSize,
       onPowerOff,
       ...props
     },
@@ -230,7 +236,7 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
         } else if (powerState === "off") {
           setPowerState("turning-on");
         } else {
-          // Already turning on or on - do nothing
+          // Already turning on or off - do nothing
           return;
         }
 
@@ -272,18 +278,28 @@ const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
       );
     }
 
+    const additionalStyle = screenSize
+      ? {
+          // Fit to space as full doesn't account for later scaling
+          width: `${screenSize.width}px`,
+          height: `${screenSize.height}px`,
+        }
+      : {};
+
     return (
       <>
         <ChromaticAberrationFilter strength={chromaticStrength} />
         <TextBloomFilter type={bloomType} />
-        <div className={cn("relative h-full w-full", className)}>
+        <div className={cn("relative h-full w-full")}>
           <div
             className={cn(
               "relative h-full w-full bg-slate-900",
               getAnimationClass(),
+              className,
             )}
             style={{
               filter: getFilterString(),
+              ...additionalStyle,
             }}
             {...props}
           >

@@ -18,12 +18,11 @@ import {
   buildCertificationsCommand,
   buildWorkExperienceCommand,
 } from "~/lib/commands";
-import { cn } from "~/lib/utils";
 import { Screen } from "~/features/Screen";
-import { useIsDesktop } from "~/hooks/useScreenSize";
-import { Monitor } from "~/components/monitor";
 import { usePowerCycle } from "~/hooks/usePowerCycle";
-import { useFocusMonitor } from "~/hooks/useFocusMonitor";
+import { Monitor, MonitorInterface } from "~/features/Monitor";
+import { useIsDesktop } from "~/hooks/useScreenSize";
+import useFocusMonitor from "~/hooks/useFocusMonitor";
 
 export type PowerState = "on" | "off";
 
@@ -32,9 +31,26 @@ export const Route = createFileRoute("/")({
     const crtScreenRef = useRef<CrtScreenInterface>(null);
     const isDesktop = useIsDesktop();
 
-    const { currentZoom, focusMonitor, unfocusMonitor } = useFocusMonitor({
-      baseWidth: 2400,
-      baseHeight: 1350,
+    const imageSize = useMemo(() => {
+      let width = 2400;
+      let height = 1350;
+      if (!isDesktop) {
+        width = 746;
+        height = 1024;
+      }
+      return { width, height };
+    }, [isDesktop]);
+
+    const {
+      currentZoom,
+      originPercentage,
+      monitorBoundingBox,
+      terminalBoundingBox,
+      offsetFrom,
+      focusMonitor,
+      unfocusMonitor,
+    } = useFocusMonitor({
+      imageSize,
     });
 
     const { isOn, onPowerOn, onPowerOff } = usePowerCycle(crtScreenRef);
@@ -96,26 +112,15 @@ export const Route = createFileRoute("/")({
     );
 
     return (
-      <div
-        className={cn(
-          "min-h-screen min-w-screen bg-slate-700 py-4 sm:py-12",
-          "bg-[#8B5E3C]",
-          "bg-[url(desk.jpeg)] bg-fixed bg-top bg-no-repeat",
-          "fixed top-0 right-0 bottom-0 left-0 overflow-hidden",
-        )}
-        style={{
-          transformOrigin: "center 27.5%",
-          transform: `scale(${currentZoom})`,
-          backgroundSize: `${2400}px ${1350}px`,
-        }}
+      <Monitor
+        currentZoom={currentZoom}
+        originPercentage={originPercentage}
+        imageSize={imageSize}
+        offsetFrom={offsetFrom}
       >
-        <Monitor
-          className={cn(
-            "crt-wrapper mx-auto border-slate-500",
-            "scale-[0.70] pt-[62px] pl-[30px]",
-          )}
-          width={1024}
-          height={768}
+        <MonitorInterface
+          monitorBoundingBox={monitorBoundingBox}
+          terminalBoundingBox={terminalBoundingBox}
           isPowered={isOn}
           onPowerClick={isOn ? onMonitorOff : onMonitorOn}
         >
@@ -123,9 +128,17 @@ export const Route = createFileRoute("/")({
             ref={crtScreenRef}
             terminalOptions={terminalOptions}
             commands={commands}
+            realResolution={{
+              width: terminalBoundingBox.width,
+              height: terminalBoundingBox.height,
+            }}
+            desiredResolution={{
+              width: 960,
+              height: 720,
+            }}
           />
-        </Monitor>
-      </div>
+        </MonitorInterface>
+      </Monitor>
     );
   },
 });

@@ -12,6 +12,10 @@ interface TerminalProps extends HTMLAttributes<HTMLDivElement> {
   commands?: Command[];
   bootCommands?: string[];
   onShutdown?: () => void;
+  screenScale?: {
+    width: number;
+    height: number;
+  };
 }
 
 const DesktopBackground = forwardRef<
@@ -38,6 +42,10 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
       bootCommands = [welcomeCommand.name],
       onShutdown,
       className,
+      screenScale = {
+        width: 1,
+        height: 1,
+      },
       ...props
     },
     ref,
@@ -100,6 +108,8 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
         )}
         style={{
           backgroundColor: options?.theme?.background || "#1a1b26",
+          transformOrigin: "top left",
+          transform: `scale(${screenScale.width}, ${screenScale.height})`,
         }}
         onTouchMove={(event) => {
           event.preventDefault();
