@@ -183,7 +183,7 @@ export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
         ref={ref}
         className={cn(
           "min-h-screen min-w-screen overflow-hidden bg-slate-700",
-          "bg-[url(desk-mobile.jpeg)] bg-fixed bg-no-repeat md:bg-[url(desk.jpeg)]",
+          "bg-[url(/desk-mobile.jpeg)] bg-fixed bg-no-repeat md:bg-[url(/desk.jpeg)]",
           className,
         )}
         style={style}
