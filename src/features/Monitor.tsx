@@ -176,6 +176,8 @@ export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
       transform: `scale(${currentZoom})`,
       backgroundSize: `${imageSize.width}px ${imageSize.height}px`,
       backgroundPosition: `left ${offsetFrom.left}px top ${offsetFrom.top}px`,
+      position: "fixed",
+      inset: `0`,
     };
 
     return (
