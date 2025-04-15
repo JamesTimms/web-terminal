@@ -10,7 +10,6 @@ export function usePowerCycle() {
   const [powerState, setPowerState] = useState<CrtPowerState>("off");
 
   const onPowerOn = useCallback(() => {
-    playPowerOnSound();
     if (powerState === "turning-off") {
       setPowerState("turning-on");
     } else if (powerState === "off") {
@@ -18,6 +17,7 @@ export function usePowerCycle() {
     } else {
       return;
     }
+    playPowerOnSound();
 
     // Set to fully on after animation
     setTimeout(() => {
@@ -26,7 +26,6 @@ export function usePowerCycle() {
   }, [powerState, playPowerOnSound]);
 
   const onPowerOff = useCallback(() => {
-    playPowerOffSound();
     if (powerState === "turning-on") {
       setPowerState("turning-off");
     } else if (powerState === "on") {
@@ -34,6 +33,7 @@ export function usePowerCycle() {
     } else {
       return;
     }
+    playPowerOffSound();
 
     // Set to fully off after animation
     setTimeout(() => {
