@@ -158,22 +158,34 @@ Monitor.displayName = "Monitor";
 // Mobile PopupMonitor only needs basic props and power state
 export const PopupMonitor = forwardRef<
   HTMLDivElement,
-  BaseMonitorProps & PowerProps
->(({ children, className, isPowered }, ref) => {
-  return (
-    <div className={cn("relative rounded-xl p-4", className)} ref={ref}>
-      <div
-        className={cn(
-          "relative z-50 h-full w-full overflow-hidden bg-black",
-          "rounded-xl border border-slate-300",
-          isPowered ? "rounded-xl" : "monitor-screen-mask",
-        )}
-      >
-        {children}
-      </div>
-    </div>
-  );
-});
+  BaseMonitorProps & PowerProps & Pick<BoundingBoxProps, "monitorBoundingBox">
+>(
+  (
+    { children, className, isPowered, onPowerClick, monitorBoundingBox },
+    ref,
+  ) => {
+    return (
+      <>
+        <MonitorInterface
+          monitorBoundingBox={monitorBoundingBox}
+          isPowered={isPowered}
+          onPowerClick={onPowerClick}
+        />
+        <div className={cn("relative rounded-xl p-4", className)} ref={ref}>
+          <div
+            className={cn(
+              "relative z-50 h-full w-full overflow-hidden bg-black",
+              "rounded-xl border border-slate-300",
+              isPowered ? "rounded-xl" : "monitor-screen-mask",
+            )}
+          >
+            {children}
+          </div>
+        </div>
+      </>
+    );
+  },
+);
 PopupMonitor.displayName = "PopupMonitor";
 
 // Desk component only needs positioning props

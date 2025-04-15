@@ -111,9 +111,6 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
           transformOrigin: "top left",
           transform: `scale(${screenScale.width}, ${screenScale.height})`,
         }}
-        onTouchMove={(event) => {
-          event.preventDefault();
-        }}
         {...props}
       >
         <div
@@ -135,9 +132,6 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
               serviceRef.current.handleBackspace();
               event.preventDefault();
             }
-          }}
-          onTouchMove={(event) => {
-            event.preventDefault();
           }}
           ref={terminalRef}
           className="h-full w-full"
