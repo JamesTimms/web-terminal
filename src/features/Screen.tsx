@@ -53,7 +53,7 @@ export const Screen = ({
           commands={commands}
           bootCommands={[
             "sleep 1000 -s",
-            // "boot",
+            "boot",
             "sleep 250 -s",
             "clear -s",
             "sleep 250 -s",
