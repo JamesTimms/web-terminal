@@ -1,5 +1,7 @@
 import { Command, CommandOption, TerminalService } from "./terminal";
 
+const VERSION = "v0.2.1";
+
 export interface ResponsiveOptions {
   isMobile: boolean;
 }
@@ -42,12 +44,16 @@ export const bootScreenCommand: Command = {
 
     terminal.clear();
 
+    // Display ASCII art in bright yellow
+    const asciiCommand = buildAsciiCommand();
+    asciiCommand.execute(["--color=226"], terminal);
+
     // Boot sequence header
     terminal.writeLine(
       "\x1b[1;32m╔════════════════════════════════════════╗\x1b[0m",
     );
     terminal.writeLine(
-      "\x1b[1;32m║  TechyTimms System Boot v0.1.0         ║\x1b[0m",
+      `\x1b[1;32m║  TechyTimms System Boot ${VERSION}         ║\x1b[0m`,
     );
     terminal.writeLine(
       "\x1b[1;32m╚════════════════════════════════════════╝\x1b[0m",
@@ -145,7 +151,7 @@ export const welcomeCommand: Command = {
   hidden: true,
   execute: (_args: string[], terminal: TerminalService) => {
     terminal.writeLine(
-      "\x1b[1;36mWelcome to TechyTimms Terminal v0.1.0\x1b[0m",
+      `\x1b[1;36mWelcome to TechyTimms Terminal ${VERSION}\x1b[0m`,
     );
     terminal.writeLine("\x1b[90m─────────────────────────────────────\x1b[0m");
     terminal.writeLine("🚀  Interactive terminal environment ready!");
@@ -181,10 +187,72 @@ export const sleep: Command = {
   },
 };
 
+export const buildAsciiCommand = (): Command => {
+  const command: Command = {
+    name: "ascii",
+    description: "Display ASCII art with stylable blocks",
+    options: [
+      {
+        name: "--color",
+        alias: "-c",
+        description: "Set the color of the blocks (e.g. --color=red)",
+      },
+    ],
+    examples: ["ascii", "ascii --color=blue"],
+    hidden: true,
+    execute: (args, terminal) => {
+      const colorArg = args.find(
+        (arg) => arg.startsWith("--color=") || arg.startsWith("-c="),
+      );
+      const colour = colorArg ? colorArg.split("=")[1] : "default";
+
+      let asciiArt = `
+████████╗███████╗ ██████╗██╗  ██╗██╗   ██╗\r\n\
+╚══██╔══╝██╔════╝██╔════╝██║  ██║╚██╗ ██╔╝\r\n\
+   ██║   █████╗  ██║     ███████║ ╚████╔╝ \r\n\
+   ██║   ██╔══╝  ██║     ██╔══██║  ╚██╔╝  \r\n\
+   ██║   ███████╗╚██████╗██║  ██║   ██║   \r\n\
+   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   \r\n\
+                                          \r\n\
+████████╗██╗███╗   ███╗███╗   ███╗███████╗\r\n\
+╚══██╔══╝██║████╗ ████║████╗ ████║██╔════╝\r\n\
+   ██║   ██║██╔████╔██║██╔████╔██║███████╗\r\n\
+   ██║   ██║██║╚██╔╝██║██║╚██╔╝██║╚════██║\r\n\
+   ██║   ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████║\r\n\
+   ╚═╝   ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝\r\n\
+                                          
+`;
+      if (colour !== "default") {
+        asciiArt = `
+\x1b[38;5;${colour}m████████╗███████╗ ██████╗██╗  ██╗██╗   ██╗\x1b[0m\r\n\
+\x1b[38;5;${colour}m╚══██╔══╝██╔════╝██╔════╝██║  ██║╚██╗ ██╔╝\x1b[0m\r\n\
+\x1b[38;5;${colour}m   ██║   █████╗  ██║     ███████║ ╚████╔╝ \x1b[0m\r\n\
+\x1b[38;5;${colour}m   ██║   ██╔══╝  ██║     ██╔══██║  ╚██╔╝  \x1b[0m\r\n\
+\x1b[38;5;${colour}m   ██║   ███████╗╚██████╗██║  ██║   ██║   \x1b[0m\r\n\
+\x1b[38;5;${colour}m   ╚═╝   ╚══════╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   \x1b[0m\r\n\
+\x1b[38;5;${colour}m                                          \x1b[0m\r\n\
+\x1b[38;5;${colour}m████████╗██╗███╗   ███╗███╗   ███╗███████╗\x1b[0m\r\n\
+\x1b[38;5;${colour}m╚══██╔══╝██║████╗ ████║████╗ ████║██╔════╝\x1b[0m\r\n\
+\x1b[38;5;${colour}m   ██║   ██║██╔████╔██║██╔████╔██║███████╗\x1b[0m\r\n\
+\x1b[38;5;${colour}m   ██║   ██║██║╚██╔╝██║██║╚██╔╝██║╚════██║\x1b[0m\r\n\
+\x1b[38;5;${colour}m   ██║   ██║██║ ╚═╝ ██║██║ ╚═╝ ██║███████║\x1b[0m\r\n\
+\x1b[38;5;${colour}m   ╚═╝   ╚═╝╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝\x1b[0m\r\n\
+\x1b[38;5;${colour}m                                          \x1b[0m\r\n\
+`;
+      }
+
+      terminal.writeLine(asciiArt);
+    },
+  };
+
+  return withHelpOption(command);
+};
+
 export const default_commands = (options: ResponsiveOptions): Command[] => [
   bootScreenCommand,
   withHelpOption(welcomeCommand),
   withHelpOption(sleep),
+  buildAsciiCommand(),
   {
     name: "help",
     description: "Display available commands",

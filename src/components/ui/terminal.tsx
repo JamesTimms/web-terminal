@@ -39,7 +39,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
     {
       options,
       commands,
-      bootCommands = [welcomeCommand.name],
+      bootCommands = ["ascii --color=226", welcomeCommand.name],
       onShutdown,
       className,
       screenScale = {
