@@ -129,7 +129,22 @@ const TextBloomFilter = ({ type = "subtle" }: { type?: BloomType }) => {
       matrix: "1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 8 -6",
     },
   };
-  const params = bloomParams[type];
+
+  const safariBloomParams = {
+    // Disable for Safari
+    // FIXME: Figure out why this doesn't work on Safari
+    strong: {
+      stdDeviation: 0.0,
+      matrix: "1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 3 -2",
+    },
+    subtle: {
+      stdDeviation: 0.0,
+      matrix: "1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 2 -1",
+    },
+  };
+
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const params = isSafari ? safariBloomParams[type] : bloomParams[type];
 
   return (
     <svg aria-hidden="true" style={hideSvgFilter}>
