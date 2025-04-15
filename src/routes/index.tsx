@@ -1,7 +1,6 @@
-import { useRef, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { CrtScreenInterface } from "~/components/ui/crt-screen";
 import {
   skills,
   achievements,
@@ -19,10 +18,10 @@ import {
   buildWorkExperienceCommand,
 } from "~/lib/commands";
 import { Screen } from "~/features/Screen";
-import { usePowerCycle } from "~/hooks/usePowerCycle";
-import { Monitor, PopupMonitor } from "~/features/Monitor";
 import { useIsDesktop } from "~/hooks/useScreenSize";
 import useFocusMonitor from "~/hooks/useFocusMonitor";
+import { usePowerCycle } from "~/hooks/usePowerCycle";
+import { Monitor as ZoomMonitor, PopupMonitor, Desk } from "~/features/Monitor";
 
 export type PowerState = "on" | "off";
 
@@ -115,43 +114,46 @@ export const Route = createFileRoute("/")({
 
     const margin = 16; // Based on PopupMonitor padding
     let width = window.innerWidth - margin * 2;
-    let height = (window.innerHeight * 2) / 3 - margin * 2;
+    let height = (window.innerHeight * 3) / 5 - margin * 2;
     if (isDesktop) {
       width = terminalBoundingBox.width;
       height = terminalBoundingBox.height;
     }
 
-    let ActualMonitor = isOn ? PopupMonitor : Monitor;
+    let Monitor = isOn ? PopupMonitor : ZoomMonitor;
 
     if (isDesktop) {
-      ActualMonitor = Monitor;
+      Monitor = ZoomMonitor;
     }
 
     return (
-      <ActualMonitor
+      <Desk
         currentZoom={currentZoom}
         originPercentage={originPercentage}
         imageSize={imageSize}
         offsetFrom={offsetFrom}
-        monitorBoundingBox={monitorBoundingBox}
-        terminalBoundingBox={terminalBoundingBox}
-        isPowered={isOn || isTurningOn}
-        onPowerClick={isOn ? onMonitorOff : onMonitorOn}
       >
-        <Screen
-          powerState={powerState}
-          terminalOptions={terminalOptions}
-          commands={commands}
-          realResolution={{
-            width,
-            height,
-          }}
-          desiredResolution={{
-            width: isDesktop ? 960 : width,
-            height: isDesktop ? 720 : height,
-          }}
-        />
-      </ActualMonitor>
+        <Monitor
+          monitorBoundingBox={monitorBoundingBox}
+          terminalBoundingBox={terminalBoundingBox}
+          isPowered={isOn || isTurningOn}
+          onPowerClick={isOn ? onMonitorOff : onMonitorOn}
+        >
+          <Screen
+            powerState={powerState}
+            terminalOptions={terminalOptions}
+            commands={commands}
+            realResolution={{
+              width,
+              height,
+            }}
+            desiredResolution={{
+              width: isDesktop ? 960 : width,
+              height: isDesktop ? 720 : height,
+            }}
+          />
+        </Monitor>
+      </Desk>
     );
   },
 });

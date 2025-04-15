@@ -1,15 +1,19 @@
-import {
-  ReactNode,
-  forwardRef,
-  HTMLAttributes,
-  type CSSProperties,
-} from "react";
+import { ReactNode, forwardRef, type CSSProperties } from "react";
 
 import "./monitor.styles.css";
 import { cn } from "~/lib/utils";
 
-interface MonitorProps {
-  children: React.ReactNode;
+interface BaseMonitorProps {
+  children?: ReactNode;
+  className?: string;
+}
+
+interface PowerProps {
+  isPowered?: boolean;
+  onPowerClick?: () => void;
+}
+
+interface DeskProps extends BaseMonitorProps {
   currentZoom: number;
   offsetFrom: {
     left: number;
@@ -23,6 +27,9 @@ interface MonitorProps {
     x: number;
     y: number;
   };
+}
+
+interface BoundingBoxProps {
   monitorBoundingBox: {
     top: number;
     left: number;
@@ -35,32 +42,12 @@ interface MonitorProps {
     width: number;
     height: number;
   };
-  isPowered?: boolean;
-  onPowerClick?: () => void;
-  debug?: boolean;
-  className?: string;
 }
 
-interface MonitorOverlayProps extends HTMLAttributes<HTMLDivElement> {
-  children?: ReactNode;
-  className?: string;
-  monitorBoundingBox: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  };
-  isPowered?: boolean;
-  onPowerClick?: () => void;
-  debug?: boolean;
-}
-
+// Power button only needs power-related props
 export const PowerButton = forwardRef<
   HTMLButtonElement,
-  HTMLAttributes<HTMLDivElement> & {
-    isPowered?: boolean;
-    onPowerClick?: () => void;
-  }
+  PowerProps & { className?: string }
 >(({ className, isPowered, onPowerClick }, ref) => {
   return (
     <div className={cn(className)}>
@@ -88,133 +75,109 @@ export const PowerButton = forwardRef<
 });
 PowerButton.displayName = "PowerButton";
 
-export const MonitorInterface = forwardRef<HTMLDivElement, MonitorOverlayProps>(
-  (
-    {
-      children,
-      className,
-      monitorBoundingBox,
-      isPowered = false,
-      debug = false,
-      onPowerClick,
-      ...props
-    },
-    ref,
-  ) => {
-    const monitorDebugClass = "border-2 border-red-500";
-
-    return (
-      <div
-        ref={ref}
-        className={cn("absolute", debug && monitorDebugClass)}
-        style={{
-          top: monitorBoundingBox.top,
-          left: monitorBoundingBox.left,
-          width: monitorBoundingBox.width,
-          height: monitorBoundingBox.height,
-          zIndex: 1,
-        }}
-        {...props}
-      >
-        <PowerButton
-          className="absolute right-[37px] bottom-[8px] md:right-[105px] md:bottom-[23px]"
-          isPowered={isPowered}
-          onPowerClick={onPowerClick}
-        />
-      </div>
-    );
-  },
-);
+// MonitorInterface only needs dimensions and power props
+export const MonitorInterface = forwardRef<
+  HTMLDivElement,
+  BaseMonitorProps & PowerProps & Pick<BoundingBoxProps, "monitorBoundingBox">
+>(({ monitorBoundingBox, isPowered, onPowerClick }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn("absolute")}
+      style={{
+        top: monitorBoundingBox.top,
+        left: monitorBoundingBox.left,
+        width: monitorBoundingBox.width,
+        height: monitorBoundingBox.height,
+        zIndex: 1,
+      }}
+    >
+      <PowerButton
+        className="absolute right-[37px] bottom-[8px] md:right-[105px] md:bottom-[23px]"
+        isPowered={isPowered}
+        onPowerClick={onPowerClick}
+      />
+    </div>
+  );
+});
 MonitorInterface.displayName = "MonitorInterface";
 
-export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
-  (
-    {
-      children,
-      className,
-      currentZoom,
-      offsetFrom,
-      imageSize,
-      originPercentage,
-      terminalBoundingBox,
-      monitorBoundingBox,
-      isPowered,
-      onPowerClick,
-      debug,
-      ...props
-    },
-    ref,
-  ) => {
-    const style: CSSProperties = {
-      transformOrigin: `${originPercentage.x}% ${originPercentage.y}%`,
-      transform: `scale(${currentZoom})`,
-      backgroundSize: `${imageSize.width}px ${imageSize.height}px`,
-      backgroundPosition: `left ${offsetFrom.left}px top ${offsetFrom.top}px`,
-      position: "fixed",
-      inset: `0`,
-    };
-
-    const screenDebugClass = "border-2 border-blue-500";
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          "min-h-screen min-w-screen bg-slate-700",
-          "bg-[url(/desk-mobile.jpeg)] bg-fixed bg-no-repeat md:bg-[url(/desk.jpeg)]",
-          className,
-        )}
-        style={style}
+// Desktop Monitor needs all props
+export const Monitor = ({
+  children,
+  className,
+  terminalBoundingBox,
+  monitorBoundingBox,
+  isPowered,
+  onPowerClick,
+}: BaseMonitorProps & PowerProps & BoundingBoxProps) => {
+  return (
+    <>
+      <svg
+        width="611.48199"
+        height="453.16052"
+        viewBox="0 0 611.48199 453.16052"
+        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <svg
-          width="611.48199"
-          height="453.16052"
-          viewBox="0 0 611.48199 453.16052"
-          version="1.1"
-          xmlns="http://www.w3.org/2000/svg"
+        <clipPath
+          id="screen-mask"
+          clipPathUnits="objectBoundingBox"
+          transform="scale(0.001635, 0.002207)"
         >
-          <clipPath
-            id="screen-mask"
-            clipPathUnits="objectBoundingBox"
-            // Force coordinates to 0-1 to act like percentages (1/viewport)
-            transform="scale(0.001635, 0.002207)"
-          >
-            <path d="M 7.14,31.258 C 12.372,19.672 15.724,18.145 28.802,15.861 95.173,6.265 192.467,1.419 308.673,0.491 c 80.857,-0.652 148.702,-2.315 269.43,8.66 14.566,2.834 22.307,7.112 24.109,18.665 10.966,56.268 13.133,320.008 1.43,396.222 -4.544,9.71 -13.712,15.961 -25.167,17.936 -100.013,9.523 -191.667,10.934 -281.882,11.185 -101.063,0.073 -253.469,-2.246 -264.41,-8.117 -11.783,-3.085 -18.179,-9.094 -21.385,-18.81 -12.391,-106.357 -14.799,-336.465 -3.66,-394.974 z" />
-          </clipPath>
-        </svg>
-        <MonitorInterface
-          monitorBoundingBox={monitorBoundingBox}
-          isPowered={isPowered}
-          onPowerClick={onPowerClick}
-        />
+          <path d="M 7.14,31.258 C 12.372,19.672 15.724,18.145 28.802,15.861 95.173,6.265 192.467,1.419 308.673,0.491 c 80.857,-0.652 148.702,-2.315 269.43,8.66 14.566,2.834 22.307,7.112 24.109,18.665 10.966,56.268 13.133,320.008 1.43,396.222 -4.544,9.71 -13.712,15.961 -25.167,17.936 -100.013,9.523 -191.667,10.934 -281.882,11.185 -101.063,0.073 -253.469,-2.246 -264.41,-8.117 -11.783,-3.085 -18.179,-9.094 -21.385,-18.81 -12.391,-106.357 -14.799,-336.465 -3.66,-394.974 z" />
+        </clipPath>
+      </svg>
+      <MonitorInterface
+        monitorBoundingBox={monitorBoundingBox}
+        isPowered={isPowered}
+        onPowerClick={onPowerClick}
+      />
+      <div
+        className={cn("absolute h-full w-full", className)}
+        style={{
+          top: terminalBoundingBox.top,
+          left: terminalBoundingBox.left,
+          width: terminalBoundingBox.width,
+          height: terminalBoundingBox.height,
+        }}
+      >
         <div
           className={cn(
-            "absolute h-full w-full",
-            debug && screenDebugClass,
-            className,
+            "monitor-screen-mask relative z-50 h-full w-full overflow-hidden bg-black",
           )}
-          {...props}
-          style={{
-            top: terminalBoundingBox.top,
-            left: terminalBoundingBox.left,
-            width: terminalBoundingBox.width,
-            height: terminalBoundingBox.height,
-          }}
         >
-          <div
-            className={cn(
-              "monitor-screen-mask relative z-50 h-full w-full overflow-hidden bg-black",
-            )}
-          >
-            {children}
-          </div>
+          {children}
         </div>
       </div>
-    );
-  },
-);
+    </>
+  );
+};
 Monitor.displayName = "Monitor";
 
-export const PopupMonitor = forwardRef<HTMLDivElement, MonitorProps>(
+// Mobile PopupMonitor only needs basic props and power state
+export const PopupMonitor = forwardRef<
+  HTMLDivElement,
+  BaseMonitorProps & PowerProps
+>(({ children, className, isPowered }, ref) => {
+  return (
+    <div className={cn("relative rounded-xl p-4", className)} ref={ref}>
+      <div
+        className={cn(
+          "relative z-50 h-full w-full overflow-hidden bg-black",
+          "rounded-xl border border-slate-300",
+          isPowered ? "rounded-xl" : "monitor-screen-mask",
+        )}
+      >
+        {children}
+      </div>
+    </div>
+  );
+});
+PopupMonitor.displayName = "PopupMonitor";
+
+// Desk component only needs positioning props
+export const Desk = forwardRef<HTMLDivElement, DeskProps>(
   (
     {
       children,
@@ -223,12 +186,6 @@ export const PopupMonitor = forwardRef<HTMLDivElement, MonitorProps>(
       offsetFrom,
       imageSize,
       originPercentage,
-      terminalBoundingBox,
-      monitorBoundingBox,
-      isPowered,
-      onPowerClick,
-      debug,
-      ...props
     },
     ref,
   ) => {
@@ -251,21 +208,11 @@ export const PopupMonitor = forwardRef<HTMLDivElement, MonitorProps>(
         )}
         style={style}
       >
-        <div className={cn("relative rounded-xl p-4", className)} {...props}>
-          <div
-            className={cn(
-              "relative z-50 h-full w-full overflow-hidden bg-black",
-              "rounded-xl border border-slate-300",
-              isPowered ? "rounded-xl" : "monitor-screen-mask",
-            )}
-          >
-            {children}
-          </div>
-        </div>
+        {children}
       </div>
     );
   },
 );
-PopupMonitor.displayName = "PopupMonitor";
+Desk.displayName = "Desk";
 
 export default Monitor;
