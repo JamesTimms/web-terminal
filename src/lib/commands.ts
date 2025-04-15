@@ -80,13 +80,13 @@ export const bootScreenCommand: Command = {
     // Hardware detection
     terminal.writeLine("\nDetecting hardware components...");
     await delay(300);
-    terminal.writeLine("\x1b[90m→ CPU: TechyCore i7 @ 3.8GHz\x1b[0m");
+    terminal.writeLine("\x1b[90m→ CPU: Intel 486DX2 @ 66MHz\x1b[0m");
     await delay(200);
-    terminal.writeLine("\x1b[90m→ RAM: 16GB DDR4-3200\x1b[0m");
+    terminal.writeLine("\x1b[90m→ RAM: 4MB Extended Memory\x1b[0m");
     await delay(200);
-    terminal.writeLine("\x1b[90m→ GPU: WebGL Renderer\x1b[0m");
+    terminal.writeLine("\x1b[90m→ VGA: Super VGA 800x600\x1b[0m");
     await delay(200);
-    terminal.writeLine("\x1b[90m→ Storage: Virtual SSD 512GB\x1b[0m");
+    terminal.writeLine("\x1b[90m→ Storage: IDE HDD 120MB\x1b[0m");
     await delay(400);
 
     // Filesystem check
@@ -113,15 +113,15 @@ export const bootScreenCommand: Command = {
     // System services startup
     terminal.writeLine("\nStarting system services:");
     const services = [
-      "core-utils",
-      "file-system",
-      "command-handler",
-      "terminal-service",
-      "user-interface",
+      "himem.sys",
+      "emm386.exe",
+      "command.com",
+      "autoexec.bat",
+      "config.sys",
     ];
 
     for (const service of services) {
-      terminal.write(`Starting ${service}... `);
+      terminal.write(`Loading ${service}... `);
       await delay(400);
       terminal.writeLine("\x1b[32m[OK]\x1b[0m");
     }
