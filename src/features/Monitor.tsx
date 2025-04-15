@@ -23,12 +23,6 @@ interface MonitorProps {
     x: number;
     y: number;
   };
-  className?: string;
-}
-
-interface MonitorOverlayProps extends HTMLAttributes<HTMLDivElement> {
-  children?: ReactNode;
-  className?: string;
   monitorBoundingBox: {
     top: number;
     left: number;
@@ -36,6 +30,21 @@ interface MonitorOverlayProps extends HTMLAttributes<HTMLDivElement> {
     height: number;
   };
   terminalBoundingBox: {
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  };
+  isPowered?: boolean;
+  onPowerClick?: () => void;
+  debug?: boolean;
+  className?: string;
+}
+
+interface MonitorOverlayProps extends HTMLAttributes<HTMLDivElement> {
+  children?: ReactNode;
+  className?: string;
+  monitorBoundingBox: {
     top: number;
     left: number;
     width: number;
@@ -85,7 +94,6 @@ export const MonitorInterface = forwardRef<HTMLDivElement, MonitorOverlayProps>(
       children,
       className,
       monitorBoundingBox,
-      terminalBoundingBox,
       isPowered = false,
       debug = false,
       onPowerClick,
@@ -93,11 +101,70 @@ export const MonitorInterface = forwardRef<HTMLDivElement, MonitorOverlayProps>(
     },
     ref,
   ) => {
-    const screenDebugClass = "border-2 border-blue-500";
     const monitorDebugClass = "border-2 border-red-500";
 
     return (
-      <>
+      <div
+        ref={ref}
+        className={cn("absolute", debug && monitorDebugClass)}
+        style={{
+          top: monitorBoundingBox.top,
+          left: monitorBoundingBox.left,
+          width: monitorBoundingBox.width,
+          height: monitorBoundingBox.height,
+          zIndex: 1,
+        }}
+        {...props}
+      >
+        <PowerButton
+          className="absolute right-[37px] bottom-[8px] md:right-[105px] md:bottom-[23px]"
+          isPowered={isPowered}
+          onPowerClick={onPowerClick}
+        />
+      </div>
+    );
+  },
+);
+MonitorInterface.displayName = "MonitorInterface";
+
+export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
+  (
+    {
+      children,
+      className,
+      currentZoom,
+      offsetFrom,
+      imageSize,
+      originPercentage,
+      terminalBoundingBox,
+      monitorBoundingBox,
+      isPowered,
+      onPowerClick,
+      debug,
+      ...props
+    },
+    ref,
+  ) => {
+    const style: CSSProperties = {
+      transformOrigin: `${originPercentage.x}% ${originPercentage.y}%`,
+      transform: `scale(${currentZoom})`,
+      backgroundSize: `${imageSize.width}px ${imageSize.height}px`,
+      backgroundPosition: `left ${offsetFrom.left}px top ${offsetFrom.top}px`,
+      position: "fixed",
+      inset: `0`,
+    };
+
+    const screenDebugClass = "border-2 border-blue-500";
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "min-h-screen min-w-screen bg-slate-700",
+          "bg-[url(/desk-mobile.jpeg)] bg-fixed bg-no-repeat md:bg-[url(/desk.jpeg)]",
+          className,
+        )}
+        style={style}
+      >
         <svg
           width="611.48199"
           height="453.16052"
@@ -114,24 +181,12 @@ export const MonitorInterface = forwardRef<HTMLDivElement, MonitorOverlayProps>(
             <path d="M 7.14,31.258 C 12.372,19.672 15.724,18.145 28.802,15.861 95.173,6.265 192.467,1.419 308.673,0.491 c 80.857,-0.652 148.702,-2.315 269.43,8.66 14.566,2.834 22.307,7.112 24.109,18.665 10.966,56.268 13.133,320.008 1.43,396.222 -4.544,9.71 -13.712,15.961 -25.167,17.936 -100.013,9.523 -191.667,10.934 -281.882,11.185 -101.063,0.073 -253.469,-2.246 -264.41,-8.117 -11.783,-3.085 -18.179,-9.094 -21.385,-18.81 -12.391,-106.357 -14.799,-336.465 -3.66,-394.974 z" />
           </clipPath>
         </svg>
+        <MonitorInterface
+          monitorBoundingBox={monitorBoundingBox}
+          isPowered={isPowered}
+          onPowerClick={onPowerClick}
+        />
         <div
-          className={cn("absolute", debug && monitorDebugClass)}
-          style={{
-            top: monitorBoundingBox.top,
-            left: monitorBoundingBox.left,
-            width: monitorBoundingBox.width,
-            height: monitorBoundingBox.height,
-            zIndex: 1,
-          }}
-        >
-          <PowerButton
-            className="absolute right-[37px] bottom-[8px] md:right-[105px] md:bottom-[23px]"
-            isPowered={isPowered}
-            onPowerClick={onPowerClick}
-          />
-        </div>
-        <div
-          ref={ref}
           className={cn(
             "absolute h-full w-full",
             debug && screenDebugClass,
@@ -153,13 +208,13 @@ export const MonitorInterface = forwardRef<HTMLDivElement, MonitorOverlayProps>(
             {children}
           </div>
         </div>
-      </>
+      </div>
     );
   },
 );
-MonitorInterface.displayName = "MonitorInterface";
+Monitor.displayName = "Monitor";
 
-export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
+export const PopupMonitor = forwardRef<HTMLDivElement, MonitorProps>(
   (
     {
       children,
@@ -168,6 +223,12 @@ export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
       offsetFrom,
       imageSize,
       originPercentage,
+      terminalBoundingBox,
+      monitorBoundingBox,
+      isPowered,
+      onPowerClick,
+      debug,
+      ...props
     },
     ref,
   ) => {
@@ -184,17 +245,27 @@ export const Monitor = forwardRef<HTMLDivElement, MonitorProps>(
       <div
         ref={ref}
         className={cn(
-          "min-h-screen min-w-screen overflow-hidden bg-slate-700",
+          "min-h-screen min-w-screen bg-slate-700",
           "bg-[url(/desk-mobile.jpeg)] bg-fixed bg-no-repeat md:bg-[url(/desk.jpeg)]",
           className,
         )}
         style={style}
       >
-        {children}
+        <div className={cn("relative rounded-xl p-4", className)} {...props}>
+          <div
+            className={cn(
+              "relative z-50 h-full w-full overflow-hidden bg-black",
+              "rounded-xl border border-slate-300",
+              isPowered ? "rounded-xl" : "monitor-screen-mask",
+            )}
+          >
+            {children}
+          </div>
+        </div>
       </div>
     );
   },
 );
-Monitor.displayName = "Monitor";
+PopupMonitor.displayName = "PopupMonitor";
 
 export default Monitor;

@@ -20,7 +20,7 @@ import {
 } from "~/lib/commands";
 import { Screen } from "~/features/Screen";
 import { usePowerCycle } from "~/hooks/usePowerCycle";
-import { Monitor, MonitorInterface } from "~/features/Monitor";
+import { Monitor, PopupMonitor } from "~/features/Monitor";
 import { useIsDesktop } from "~/hooks/useScreenSize";
 import useFocusMonitor from "~/hooks/useFocusMonitor";
 
@@ -28,7 +28,6 @@ export type PowerState = "on" | "off";
 
 export const Route = createFileRoute("/")({
   component: () => {
-    const crtScreenRef = useRef<CrtScreenInterface>(null);
     const isDesktop = useIsDesktop();
 
     const imageSize = useMemo(() => {
@@ -53,17 +52,20 @@ export const Route = createFileRoute("/")({
       imageSize,
     });
 
-    const { isOn, onPowerOn, onPowerOff } = usePowerCycle(crtScreenRef);
+    const { powerState, onPowerOn, onPowerOff, isOn, isTurningOn } =
+      usePowerCycle();
 
     const onMonitorOn = useCallback(() => {
       onPowerOn();
+      if (!isDesktop) return;
       focusMonitor();
-    }, [onPowerOn, focusMonitor]);
+    }, [onPowerOn, focusMonitor, isDesktop]);
 
     const onMonitorOff = useCallback(() => {
       onPowerOff();
+      if (!isDesktop) return;
       unfocusMonitor();
-    }, [onPowerOff, unfocusMonitor]);
+    }, [onPowerOff, unfocusMonitor, isDesktop]);
 
     const terminalDimensions = useMemo(
       () => ({
@@ -111,34 +113,45 @@ export const Route = createFileRoute("/")({
       [isDesktop, terminalDimensions.cols, terminalDimensions.rows],
     );
 
+    const margin = 16; // Based on PopupMonitor padding
+    let width = window.innerWidth - margin * 2;
+    let height = (window.innerHeight * 2) / 3 - margin * 2;
+    if (isDesktop) {
+      width = terminalBoundingBox.width;
+      height = terminalBoundingBox.height;
+    }
+
+    let ActualMonitor = isOn ? PopupMonitor : Monitor;
+
+    if (isDesktop) {
+      ActualMonitor = Monitor;
+    }
+
     return (
-      <Monitor
+      <ActualMonitor
         currentZoom={currentZoom}
         originPercentage={originPercentage}
         imageSize={imageSize}
         offsetFrom={offsetFrom}
+        monitorBoundingBox={monitorBoundingBox}
+        terminalBoundingBox={terminalBoundingBox}
+        isPowered={isOn || isTurningOn}
+        onPowerClick={isOn ? onMonitorOff : onMonitorOn}
       >
-        <MonitorInterface
-          monitorBoundingBox={monitorBoundingBox}
-          terminalBoundingBox={terminalBoundingBox}
-          isPowered={isOn}
-          onPowerClick={isOn ? onMonitorOff : onMonitorOn}
-        >
-          <Screen
-            ref={crtScreenRef}
-            terminalOptions={terminalOptions}
-            commands={commands}
-            realResolution={{
-              width: terminalBoundingBox.width,
-              height: terminalBoundingBox.height,
-            }}
-            desiredResolution={{
-              width: 960,
-              height: 720,
-            }}
-          />
-        </MonitorInterface>
-      </Monitor>
+        <Screen
+          powerState={powerState}
+          terminalOptions={terminalOptions}
+          commands={commands}
+          realResolution={{
+            width,
+            height,
+          }}
+          desiredResolution={{
+            width: isDesktop ? 960 : width,
+            height: isDesktop ? 720 : height,
+          }}
+        />
+      </ActualMonitor>
     );
   },
 });

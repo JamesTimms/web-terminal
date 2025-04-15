@@ -1,33 +1,50 @@
-import { useState, useCallback, RefObject } from "react";
+import { useState, useCallback } from "react";
 
-import { PowerState } from "~/routes/index";
-import { CrtScreenInterface } from "~/components/ui/crt-screen";
 import { usePowerOnSound, usePowerOffSound } from "~/hooks/useSound";
 
-export function usePowerCycle(
-  crtScreenRef: RefObject<CrtScreenInterface | null>,
-) {
+export type CrtPowerState = "off" | "on" | "turning-on" | "turning-off";
+
+export function usePowerCycle() {
   const playPowerOnSound = usePowerOnSound();
   const playPowerOffSound = usePowerOffSound();
-  const [powerState, setPowerState] = useState<PowerState>("off");
+  const [powerState, setPowerState] = useState<CrtPowerState>("off");
 
   const onPowerOn = useCallback(() => {
-    if (!crtScreenRef.current) return;
     playPowerOnSound();
-    setPowerState("on");
-    crtScreenRef.current.powerOn();
-    playPowerOnSound();
-  }, [crtScreenRef, playPowerOnSound]);
+    if (powerState === "turning-off") {
+      setPowerState("turning-on");
+    } else if (powerState === "off") {
+      setPowerState("turning-on");
+    } else {
+      return;
+    }
+
+    // Set to fully on after animation
+    setTimeout(() => {
+      setPowerState("on");
+    }, 1500);
+  }, [powerState, playPowerOnSound]);
 
   const onPowerOff = useCallback(() => {
-    if (!crtScreenRef.current) return;
     playPowerOffSound();
-    crtScreenRef.current.powerOff();
-    setPowerState("off");
-  }, [crtScreenRef, playPowerOffSound]);
+    if (powerState === "turning-on") {
+      setPowerState("turning-off");
+    } else if (powerState === "on") {
+      setPowerState("turning-off");
+    } else {
+      return;
+    }
+
+    // Set to fully off after animation
+    setTimeout(() => {
+      setPowerState("off");
+    }, 600);
+  }, [powerState, playPowerOffSound]);
 
   const isOn = powerState === "on";
   const isOff = powerState === "off";
+  const isTurningOn = powerState === "turning-on";
+  const isTurningOff = powerState === "turning-off";
 
   return {
     powerState,
@@ -35,5 +52,7 @@ export function usePowerCycle(
     onPowerOff,
     isOn,
     isOff,
+    isTurningOn,
+    isTurningOff,
   };
 }

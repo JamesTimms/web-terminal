@@ -1,17 +1,11 @@
-import {
-  forwardRef,
-  useState,
-  useImperativeHandle,
-  useRef,
-  useEffect,
-  HTMLAttributes,
-} from "react";
+import { HTMLAttributes } from "react";
 
 import "./crt-screen.styles.css";
 import { cn } from "~/lib/utils";
+import { type CrtPowerState } from "~/hooks/usePowerCycle";
 
-export type ChromaticStrength = "subtle" | "normal" | "strong" | "extreme";
 export type BloomType = "strong" | "subtle";
+export type ChromaticStrength = "subtle" | "normal" | "strong" | "extreme";
 
 export interface CrtScreenProps extends HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
@@ -22,7 +16,7 @@ export interface CrtScreenProps extends HTMLAttributes<HTMLDivElement> {
     width: number;
     height: number;
   };
-  onPowerOff?: () => void;
+  powerState: CrtPowerState;
 }
 
 export interface CrtScreenInterface {
@@ -170,153 +164,82 @@ const TextBloomFilter = ({ type = "subtle" }: { type?: BloomType }) => {
   );
 };
 
-const CrtScreen = forwardRef<CrtScreenInterface, CrtScreenProps>(
-  (
-    {
-      children,
-      className,
-      chromaticStrength = "subtle",
-      bloomType = "subtle",
-      screenSize,
-      onPowerOff,
-      ...props
-    },
-    ref,
-  ) => {
-    const [powerState, setPowerState] = useState<
-      "off" | "on" | "turning-on" | "turning-off"
-    >("off");
-    const timeoutRef = useRef<number | null>(null);
+const CrtScreen = ({
+  children,
+  className,
+  chromaticStrength = "subtle",
+  bloomType = "subtle",
+  screenSize,
+  powerState,
+  ...props
+}: CrtScreenProps) => {
+  const getFilterString = () => {
+    const filters = [];
 
-    // Clean up timeout when component unmounts
-    useEffect(() => {
-      return () => {
-        if (timeoutRef.current) {
-          window.clearTimeout(timeoutRef.current);
-        }
-      };
-    }, []);
+    filters.push(`url(#text-bloom-${bloomType})`);
+    filters.push(`url(#chromatic-aberration-${chromaticStrength})`);
 
-    // Clear pending timeouts
-    const clearPendingTimeouts = () => {
-      if (timeoutRef.current) {
-        window.clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
+    return filters.join(" ");
+  };
+
+  const getAnimationClass = () => {
+    switch (powerState) {
+      case "turning-on":
+        return "crt-turn-on";
+      case "turning-off":
+        return "crt-turn-off";
+      default:
+        return "";
+    }
+  };
+
+  if (powerState === "off") {
+    return (
+      <div
+        className={cn("relative h-full w-full bg-black", className)}
+        {...props}
+      >
+        <div className="crt-curvature" />
+      </div>
+    );
+  }
+
+  const additionalStyle = screenSize
+    ? {
+        width: `${screenSize.width}px`,
+        height: `${screenSize.height}px`,
       }
-    };
+    : {};
 
-    useImperativeHandle(ref, () => ({
-      powerOff: () => {
-        // Clear any pending timeouts first
-        clearPendingTimeouts();
-
-        // If we're turning on, we need to interrupt
-        if (powerState === "turning-on") {
-          setPowerState("turning-off");
-        } else if (powerState === "on") {
-          setPowerState("turning-off");
-        } else {
-          // Already turning off or off - do nothing
-          return;
-        }
-
-        timeoutRef.current = window.setTimeout(() => {
-          setPowerState("off");
-          if (onPowerOff) onPowerOff();
-          timeoutRef.current = null;
-        }, 600); // Match animation duration
-      },
-      powerOn: () => {
-        // Clear any pending timeouts first
-        clearPendingTimeouts();
-
-        // If we're turning off, we need to interrupt
-        if (powerState === "turning-off") {
-          setPowerState("turning-on");
-        } else if (powerState === "off") {
-          setPowerState("turning-on");
-        } else {
-          // Already turning on or off - do nothing
-          return;
-        }
-
-        timeoutRef.current = window.setTimeout(() => {
-          setPowerState("on");
-          timeoutRef.current = null;
-        }, 1500); // Match animation duration
-      },
-    }));
-
-    const getFilterString = () => {
-      const filters = [];
-
-      filters.push(`url(#text-bloom-${bloomType})`);
-      filters.push(`url(#chromatic-aberration-${chromaticStrength})`);
-
-      return filters.join(" ");
-    };
-
-    const getAnimationClass = () => {
-      switch (powerState) {
-        case "turning-on":
-          return "crt-turn-on";
-        case "turning-off":
-          return "crt-turn-off";
-        default:
-          return "";
-      }
-    };
-
-    if (powerState === "off") {
-      return (
+  return (
+    <>
+      <ChromaticAberrationFilter strength={chromaticStrength} />
+      <TextBloomFilter type={bloomType} />
+      <div className={cn("relative h-full w-full")}>
         <div
-          className={cn("relative h-full w-full bg-black", className)}
+          className={cn(
+            "relative h-full w-full bg-slate-900",
+            getAnimationClass(),
+            className,
+          )}
+          style={{
+            filter: getFilterString(),
+            ...additionalStyle,
+          }}
           {...props}
         >
+          {children}
+          <div className="crt-glow" />
+          <div className="crt-rgb" />
+          <div className="crt-vignette" />
+          <div className="crt-scanlines" />
           <div className="crt-curvature" />
+          <div className="crt-flicker" />
         </div>
-      );
-    }
-
-    const additionalStyle = screenSize
-      ? {
-          // Fit to space as full doesn't account for later scaling
-          width: `${screenSize.width}px`,
-          height: `${screenSize.height}px`,
-        }
-      : {};
-
-    return (
-      <>
-        <ChromaticAberrationFilter strength={chromaticStrength} />
-        <TextBloomFilter type={bloomType} />
-        <div className={cn("relative h-full w-full")}>
-          <div
-            className={cn(
-              "relative h-full w-full bg-slate-900",
-              getAnimationClass(),
-              className,
-            )}
-            style={{
-              filter: getFilterString(),
-              ...additionalStyle,
-            }}
-            {...props}
-          >
-            {children}
-            <div className="crt-glow" />
-            <div className="crt-rgb" />
-            <div className="crt-vignette" />
-            <div className="crt-scanlines" />
-            <div className="crt-curvature" />
-            <div className="crt-flicker" />
-          </div>
-        </div>
-      </>
-    );
-  },
-);
-CrtScreen.displayName = "CrtScreen";
+      </div>
+    </>
+  );
+};
 
 export { CrtScreen, ChromaticAberrationFilter, TextBloomFilter };
 export default CrtScreen;
