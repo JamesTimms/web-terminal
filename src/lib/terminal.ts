@@ -58,7 +58,7 @@ export class TerminalService {
     this.terminal.loadAddon(new WebLinksAddon());
 
     this.bootCommands = bootCommands;
-    this.setupKeyHandlers();
+    this.setupDesktopKeyHandlers();
     this.registerDefaultCommands(commands);
   }
 
@@ -90,9 +90,9 @@ export class TerminalService {
     this.commands.delete(name);
   }
 
-  private setupKeyHandlers() {
+  private setupDesktopKeyHandlers() {
     this.terminal.onKey(({ key, domEvent }) => {
-      const ev = domEvent as KeyboardEvent;
+      const event = domEvent as KeyboardEvent;
 
       if (
         [
@@ -103,18 +103,19 @@ export class TerminalService {
           "Home",
           "End",
           " ",
-        ].includes(ev.key)
+        ].includes(event.key)
       ) {
-        ev.preventDefault();
+        event.preventDefault();
       }
 
-      const isModifer = ev.shiftKey || ev.ctrlKey || ev.altKey || ev.metaKey;
+      const isModifer =
+        event.shiftKey || event.ctrlKey || event.altKey || event.metaKey;
       if (isModifer) {
         // Prevent default to avoid double input
-        ev.preventDefault();
+        event.preventDefault();
       }
 
-      switch (ev.key) {
+      switch (event.key) {
         case "Enter":
           this.handleEnter();
           break;
@@ -365,6 +366,7 @@ export class TerminalService {
     for (const char of text) {
       this.commandBuffer += char;
       this.terminal.write(char);
+      this.cursorPosition += char.length;
     }
   }
 

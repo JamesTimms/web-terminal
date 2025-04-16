@@ -2,8 +2,8 @@ import { useEffect, useRef, forwardRef, HTMLAttributes } from "react";
 import { ITerminalOptions, ITerminalInitOnlyOptions } from "@xterm/xterm";
 
 import { cn } from "~/lib/utils";
-import { Command, TerminalService } from "~/lib/terminal";
 import { welcomeCommand } from "~/lib/commands";
+import { Command, TerminalService } from "~/lib/terminal";
 
 export type TerminalOptions = ITerminalOptions & ITerminalInitOnlyOptions;
 
@@ -128,7 +128,7 @@ const Terminal = forwardRef<HTMLDivElement, TerminalProps>(
             if (event.key === "Enter") {
               await serviceRef.current.handleEnter();
               event.preventDefault();
-            } else if (event.key === "Backspace") {
+            } else if (event.key === "Backspace" || event.key === "Delete") {
               serviceRef.current.handleBackspace();
               event.preventDefault();
             }
