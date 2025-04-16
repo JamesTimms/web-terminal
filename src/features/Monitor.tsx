@@ -44,7 +44,6 @@ interface BoundingBoxProps {
   };
 }
 
-// Power button only needs power-related props
 export const PowerButton = forwardRef<
   HTMLButtonElement,
   PowerProps & { className?: string }
@@ -75,7 +74,6 @@ export const PowerButton = forwardRef<
 });
 PowerButton.displayName = "PowerButton";
 
-// MonitorInterface only needs dimensions and power props
 export const MonitorInterface = forwardRef<
   HTMLDivElement,
   BaseMonitorProps & PowerProps & Pick<BoundingBoxProps, "monitorBoundingBox">
@@ -102,7 +100,6 @@ export const MonitorInterface = forwardRef<
 });
 MonitorInterface.displayName = "MonitorInterface";
 
-// Desktop Monitor needs all props
 export const Monitor = ({
   children,
   className,
@@ -155,7 +152,6 @@ export const Monitor = ({
 };
 Monitor.displayName = "Monitor";
 
-// Mobile PopupMonitor only needs basic props and power state
 export const PopupMonitor = forwardRef<
   HTMLDivElement,
   BaseMonitorProps & PowerProps & Pick<BoundingBoxProps, "monitorBoundingBox">
