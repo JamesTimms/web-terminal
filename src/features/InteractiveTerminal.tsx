@@ -110,14 +110,14 @@ export const InteractiveTerminal = () => {
   const margin = 16; // Based on PopupMonitor padding
   let width = window.innerWidth - margin * 2;
   let height = (window.innerHeight * 3) / 5 - margin * 2;
-  if (isDesktop) {
+  if (isDesktop || isTurningOn) {
     width = terminalBoundingBox.width;
     height = terminalBoundingBox.height;
   }
 
   let Monitor = isOn ? PopupMonitor : ZoomMonitor;
 
-  if (isDesktop) {
+  if (isDesktop || isTurningOn) {
     Monitor = ZoomMonitor;
   }
 
@@ -143,8 +143,8 @@ export const InteractiveTerminal = () => {
             height,
           }}
           desiredResolution={{
-            width: isDesktop ? 960 : width,
-            height: isDesktop ? 720 : height,
+            width: isDesktop || isTurningOn ? 960 : width,
+            height: isDesktop || isTurningOn ? 720 : height,
           }}
         />
       </Monitor>
